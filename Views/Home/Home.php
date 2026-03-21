@@ -1,3 +1,20 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['idUsuario'])) {
+    header("Location: ../Registro/login.php");
+    exit();
+}
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+?>
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -31,6 +48,8 @@
 <body>
     <!-- Navbar componente-->
     <?php require('../components/nav.php')?>
+
+    <a href="../../Controllers/logout.php" class="btn btn-danger">Cerrar sesión</a>
 
 
 

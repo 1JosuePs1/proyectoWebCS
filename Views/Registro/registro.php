@@ -34,7 +34,7 @@
                             <h3 class="mb-0">Registro de Usuario</h3>
                         </div>
                         <div class="card-body p-4">
-                            <form action="./src/includes/registro.module.php" method="POST" id="formAuth">
+                            <form action="../../Controllers/registroController.php" method="POST" id="formAuth">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="InputName" name="nombreUsuario" placeholder="Nombre completo" required>
                                     <label for="InputName">Nombre completo</label>
@@ -53,7 +53,7 @@
                                 </div>
                                 
                                 <div class="d-grid">
-                                    <button type="submit" onclick="window.location.href='../Home/Home.php'" class="btn backgroundPrincipal btn-lg text-white">Registrarse</button>
+                                    <button type="submit" class="btn backgroundPrincipal btn-lg text-white">Registrarse</button>
                                 </div>
                                 <div class=" text-center py-3">
                                     <small class="text-muted">Ya tienes cuenta <a href="../../index.php" class="text-primary">Login</a></small>

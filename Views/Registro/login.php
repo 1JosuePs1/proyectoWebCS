@@ -32,7 +32,7 @@
                         <h3 class="mb-0">Iniciar Sesión</h3>
                     </div>
                     <div class="card-body p-4">
-                        <form action="" method="post" id="formLogin">
+                        <form action="../../Controllers/loginController.php" method="POST" id="formLogin">
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="correoUsuario" 
                                 name="correoUsuario" 
@@ -46,7 +46,7 @@
                             </div>
                            
                             <div class="d-grid">
-                                <button type="submit" onclick="window.location.href='./Views/Home/Home.php'" class="btn backgroundPrincipal btn-lg text-white">Iniciar Sesión</button>
+                                <button type="submit" class="btn backgroundPrincipal btn-lg text-white">Iniciar Sesión</button>
                             </div>
                         </form>
                     </div>

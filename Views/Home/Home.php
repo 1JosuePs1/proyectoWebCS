@@ -41,9 +41,6 @@ $categorias = ObtenerCategoriasController();
     <!-- Navbar componente-->
     <?php require('../components/nav.php')?>
 
-    <a href="../../Controllers/logout.php" class="btn btn-danger">Cerrar sesión</a>
-
-
 
     
     <div id="registroCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
@@ -188,12 +185,11 @@ $categorias = ObtenerCategoriasController();
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="producto-card">
                     <?php if (!empty($producto['primeraImagen'])): ?>
-                        <img src="../assets/image/productos/<?php echo $producto['idProducto']; ?>/<?php echo htmlspecialchars($producto['primeraImagen']); ?>"
-                             class="img-fluid producto-imagen"
-                             alt="<?php echo htmlspecialchars($producto['nombreProducto']); ?>"
-                             style="height: 280px; width: 100%; object-fit: contain; border-radius: 8px;">
+                            <img src="../assets/image/productos/<?php echo $producto['idProducto']; ?>/<?php echo htmlspecialchars($producto['primeraImagen']); ?>"
+                                class="img-fluid producto-imagen card-img-producto"
+                                alt="<?php echo htmlspecialchars($producto['nombreProducto']); ?>">
                     <?php else: ?>
-                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 280px; border-radius: 8px;">
+                        <div class="bg-light d-flex align-items-center justify-content-center card-img-producto">
                             <i class="bi bi-image fs-1 text-muted"></i>
                         </div>
                     <?php endif; ?>
@@ -206,9 +202,14 @@ $categorias = ObtenerCategoriasController();
                         
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="producto-precio">₡<?php echo number_format($producto['precioProducto'], 0, ',', '.'); ?></span>
-                            <button class="btn btn-sm btn-color">
-                                <i class="bi bi-cart-plus"></i>
-                            </button>
+                            <div class="d-flex">
+                                <button class="btn btn-sm btn-color me-1" title="Agregar al carrito">
+                                    <i class="bi bi-cart-plus"></i>
+                                </button>
+                                <a href="../producto/producto.php?id=<?php echo urlencode($producto['idProducto']); ?>" class="btn btn-sm btn-color" title="Ver producto">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

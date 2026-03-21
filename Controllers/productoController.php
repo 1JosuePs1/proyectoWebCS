@@ -1,6 +1,19 @@
 <?php
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/productosModel.php";
 
+function ObtenerProductoDetalleController($idProducto)
+{
+    $p = ObtenerProductoPorIdModel($idProducto);
+    if ($p && isset($p['imagenProducto'])) {
+        $imagenes = json_decode($p['imagenProducto'], true);
+        $p['imagen'] = isset($imagenes[0]) ? '../assets/image/productos/' . $p['idProducto'] . '/' . $imagenes[0] : '../assets/image/imgLogo/logo.png';
+    } else {
+        $p['imagen'] = '../assets/image/imgLogo/logo.png';
+    }
+    return $p;
+}
+
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -61,5 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header("Location: ../Views/Admin/dashboard.php");
     exit();
+}
+
+
+function ObtenerProductoPorIdController($idProducto)
+{
+    return ObtenerProductoPorIdModel($idProducto);
 }
 ?>

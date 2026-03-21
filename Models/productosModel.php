@@ -1,3 +1,4 @@
+
 <?php
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/UtilitarioModel.php";
 
@@ -65,4 +66,19 @@ function ObtenerCategoriasModel()
     $conexion->next_result();
     CloseDatabase($conexion);
     return $listaCategorias;
+}
+
+
+function ObtenerProductoPorIdModel($idProducto)
+{
+    $conexion = OpenDatabase();
+    $consultaSQL = "CALL sp_ObtenerProductoPorId(?)";
+    $consultaPreparada = $conexion->prepare($consultaSQL);
+    $consultaPreparada->bind_param("i", $idProducto);
+    $consultaPreparada->execute();
+    $resultado = $consultaPreparada->get_result();
+    $producto = $resultado->fetch_assoc();
+    $consultaPreparada->close();
+    CloseDatabase($conexion);
+    return $producto;
 }

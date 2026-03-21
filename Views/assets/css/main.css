@@ -1,3 +1,72 @@
+/* Sticky Footer */
+html, body {
+    height: 100%;
+}
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.main-content {
+    flex: 1 0 auto;
+}
+footer, .footer {
+    flex-shrink: 0;
+}
+/* Sombra en el input de buscar */
+.navbar .form-control[type="search"] {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    border: none;
+}
+
+/* Botón de usuario sin borde y más grande */
+.navbar .btn-user {
+
+    border: none !important;
+    box-shadow: none;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    font-size: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #111 !important;
+}
+.navbar .btn-user:focus, .navbar .btn-user:hover {
+    background: #f3f3f3;
+    color: #e42327 !important;
+}
+
+/* Botón de salir fondo rojo, icono grande */
+.navbar .btn-logout {
+    background: #e42327 !important;
+    border: none !important;
+    box-shadow: none;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    font-size: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff !important;
+}
+.navbar .btn-logout:focus, .navbar .btn-logout:hover {
+    background: #b21a1e !important;
+    color: #fff !important;
+}
+/* Fondo rojo personalizado para navbar */
+.bg-red-custom {
+    background-color: var(--primer-color) !important;
+}
+
+/* Navbar: texto, íconos y logo en negro */
+.navbar, .navbar * {
+    color: #111 !important;
+    fill: #111 !important;
+}
+.navbar .navbar-brand img {
+    filter: none !important;
+}
 /*===================Fuentes=====================*/
 /* Cambiar el ancho de la scrollbar */
 body::-webkit-scrollbar {

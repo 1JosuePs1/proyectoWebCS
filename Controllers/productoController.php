@@ -1,45 +1,65 @@
 <?php
-require_once("../config/conexion.php");
+include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/productosModel.php";
 
-$idCategoria = trim($_POST['idCategoria']);
-$nombre = trim($_POST['nombreProducto']);
-$descripcion = trim($_POST['descripcionProducto']);
-$precio = trim($_POST['precioProducto']);
-$stock = trim($_POST['stockProducto']);
-$estado = trim($_POST['estadoProducto']);
-
-if (empty($idCategoria) || empty($nombre) || empty($precio) || $stock === "" || empty($estado)) {
-    die("Todos los campos obligatorios deben completarse");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-if (!is_numeric($precio) || $precio <= 0) {
-    die("El precio debe ser mayor que 0");
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-if (!is_numeric($stock) || $stock < 0) {
-    die("El stock no puede ser negativo");
-}
+    $idCategoria = trim($_POST['idCategoria']);
+    $nombre = trim($_POST['nombreProducto']);
+    $marca = trim($_POST['marcaProducto']);
+    $descripcion = trim($_POST['descripcionProducto']);
+    $precio = trim($_POST['precioProducto']);
+    $stock = trim($_POST['stockProducto']);
 
-$nombreImagen = "";
-
-if (isset($_FILES['imagenProducto']) && $_FILES['imagenProducto']['error'] === 0) {
-    $nombreImagen = time() . "_" . basename($_FILES['imagenProducto']['name']);
-    $rutaDestino = "../Views/assets/image/" . $nombreImagen;
-
-    if (!move_uploaded_file($_FILES['imagenProducto']['tmp_name'], $rutaDestino)) {
-        die("Error al subir la imagen");
+    if (empty($idCategoria) || empty($nombre) || empty($marca) || empty($precio) || $stock === "") {
+        die("Todos los campos obligatorios deben completarse");
     }
-}
 
-$sql = "INSERT INTO producto (idCategoria, nombreProducto, descripcionProducto, precioProducto, stockProducto, imagenProducto, estadoProducto)
-        VALUES (?, ?, ?, ?, ?, ?, ?)";
+    if (!is_numeric($precio) || $precio <= 0) {
+        die("El precio debe ser mayor que 0");
+    }
 
-$stmt = $conexion->prepare($sql);
-$stmt->bind_param("issdiss", $idCategoria, $nombre, $descripcion, $precio, $stock, $nombreImagen, $estado);
+    if (!is_numeric($stock) || $stock < 0) {
+        die("El stock no puede ser negativo");
+    }
 
-if ($stmt->execute()) {
-    echo "Producto registrado correctamente";
-} else {
-    echo "Error al registrar producto";
+    // 1. Insertar producto con JSON vacío para obtener el ID
+    $idProducto = registrarProductoModel($idCategoria, $nombre, $marca, $descripcion, $precio, $stock, '[]');
+
+    if (!$idProducto) {
+        die("Error al registrar el producto en la base de datos");
+    }
+
+    // 2. Crear carpeta para las imágenes del producto
+    $carpeta = $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Views/assets/image/productos/" . $idProducto;
+    if (!file_exists($carpeta)) {
+        mkdir($carpeta, 0755, true);
+    }
+
+    // 3. Subir imágenes y guardar nombres
+    $imagenesGuardadas = [];
+    if (isset($_FILES['imagenes']) && count($_FILES['imagenes']['name']) > 0) {
+        for ($i = 0; $i < count($_FILES['imagenes']['name']); $i++) {
+            if ($_FILES['imagenes']['error'][$i] === 0) {
+                $extension = pathinfo($_FILES['imagenes']['name'][$i], PATHINFO_EXTENSION);
+                $nombreImagen = ($i + 1) . "." . strtolower($extension);
+                $rutaDestino = $carpeta . "/" . $nombreImagen;
+
+                if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$i], $rutaDestino)) {
+                    $imagenesGuardadas[] = $nombreImagen;
+                }
+            }
+        }
+    }
+
+    // 4. Actualizar el producto con el JSON de imágenes
+    $jsonImagenes = json_encode($imagenesGuardadas);
+    actualizarImagenesProductoModel($idProducto, $jsonImagenes);
+
+    header("Location: ../Views/Admin/dashboard.php");
+    exit();
 }
 ?>

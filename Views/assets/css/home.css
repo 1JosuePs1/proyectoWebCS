@@ -122,6 +122,62 @@
 
 /* CARD PRODUCTOS*/
 
+.producto-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.producto-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.producto-imagen {
+    max-width: 100%;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.producto-nombre {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.producto-marca {
+    font-size: 12px;
+    color: #999;
+}
+
+.producto-descripcion {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.producto-precio {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e74c3c;
+}
+
+.producto-card .btn-color {
+    background-color: var(--primer-color);
+    color: white;
+    padding: 6px 12px;
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+}
+
+.producto-card .btn-color:hover {
+    background-color: #b21a1e;
+    color: white;
+    transform: none;
+}
+
 .btn-color{
     background-color:  var(--primer-color);
 }

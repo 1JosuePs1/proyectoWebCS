@@ -1,9 +1,9 @@
 <?php
 $host = "127.0.0.1";
 $usuario = "root";
-$contrasena = "";
+$contrasena = "123456";
 $baseDatos = "tiendaGaming";
-$puerto = 3307;
+$puerto = 3306;
 
 $conexion = new mysqli($host, $usuario, $contrasena, $baseDatos, $puerto);
 

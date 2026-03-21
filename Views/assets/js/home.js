@@ -57,3 +57,31 @@ document.addEventListener('DOMContentLoaded', function() {
     
  
 });
+
+// Slider de imágenes por producto
+document.querySelectorAll('.producto-slider').forEach(function(sliderDiv) {
+    const btnPrev = sliderDiv.querySelector('.slider-prev');
+    const btnNext = sliderDiv.querySelector('.slider-next');
+    const img = sliderDiv.querySelector('.producto-imagen');
+
+    if (!img) return;
+
+    const imagenes = JSON.parse(sliderDiv.dataset.imagenes || '[]');
+    let indiceActual = 0;
+
+    if (imagenes.length <= 1) {
+        if (btnPrev) btnPrev.style.display = 'none';
+        if (btnNext) btnNext.style.display = 'none';
+        return;
+    }
+
+    btnPrev.addEventListener('click', function() {
+        indiceActual = (indiceActual - 1 + imagenes.length) % imagenes.length;
+        img.src = imagenes[indiceActual];
+    });
+
+    btnNext.addEventListener('click', function() {
+        indiceActual = (indiceActual + 1) % imagenes.length;
+        img.src = imagenes[indiceActual];
+    });
+});

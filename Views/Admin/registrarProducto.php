@@ -1,13 +1,9 @@
 <?php
 session_start();
-require_once("../../config/conexion.php");
+include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasController.php";
 
-if (!isset($_SESSION['idUsuario'])) {
-    header("Location: ../Registro/login.php");
-    exit();
-}
-
-$categorias = $conexion->query("SELECT * FROM categoria");
+// Sin validación de sesión (sesión cerrada)
+$categorias = ObtenerCategoriasController();
 ?>
 
 <!DOCTYPE html>
@@ -31,21 +27,16 @@ $categorias = $conexion->query("SELECT * FROM categoria");
                 <div class="card-body p-4">
                     <form action="../../Controllers/productoController.php" method="POST" enctype="multipart/form-data">
 
-                        <div class="mb-3">
-                            <label class="form-label">Categoría</label>
-                            <select name="idCategoria" class="form-control" required>
-                                <option value="">Seleccione una categoría</option>
-                                <?php while ($categoria = $categorias->fetch_assoc()) { ?>
-                                    <option value="<?php echo $categoria['idCategoria']; ?>">
-                                        <?php echo $categoria['nombreCategoria']; ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
+                        
 
                         <div class="mb-3">
                             <label class="form-label">Nombre del producto</label>
                             <input type="text" name="nombreProducto" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Marca</label>
+                            <input type="text" name="marcaProducto" class="form-control" required>
                         </div>
 
                         <div class="mb-3">
@@ -64,8 +55,9 @@ $categorias = $conexion->query("SELECT * FROM categoria");
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Imagen</label>
-                            <input type="file" name="imagenProducto" class="form-control">
+                            <label class="form-label">Imágenes del producto</label>
+                            <input type="file" name="imagenes[]" class="form-control" accept="image/*" multiple required>
+                            <small class="text-muted">Puedes seleccionar varias imágenes (se mostrará un slider)</small>
                         </div>
 
                         <div class="mb-3">
@@ -73,6 +65,20 @@ $categorias = $conexion->query("SELECT * FROM categoria");
                             <select name="estadoProducto" class="form-control" required>
                                 <option value="disponible">Disponible</option>
                                 <option value="agotado">Agotado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Categoría</label>
+                            <select name="idCategoria" class="form-control" required>
+                                <option value="">Seleccione una categoría</option>
+                                <?php
+                                if (is_array($categorias) && count($categorias) > 0) {
+                                    foreach ($categorias as $categoria) {
+                                        echo "<option value='" . htmlspecialchars($categoria['idCategoria']) . "'>" . htmlspecialchars($categoria['nombreCategoria']) . "</option>";
+                                    }
+                                }
+                                ?>
                             </select>
                         </div>
 

@@ -1,20 +1,12 @@
+
 <?php
 session_start();
+include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasController.php";
 
-if (!isset($_SESSION['idUsuario'])) {
-    header("Location: ../Registro/login.php");
-    exit();
-}
+$listaProductos = ObtenerProductosController();
+$categorias = ObtenerCategoriasController();
+?> 
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -190,63 +182,38 @@ error_reporting(E_ALL);
 
     <!-- Main -->
     <div class="container my-5">
-        <h2 class="mb-4 ">Productos destacados</h2>
-        <div class="row g-4">
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card h-100">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:180px">Imagen 1</div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Título 1</h5>
-                        <p class="card-text">Descripcion breve del producto 1.</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <strong>Precio: ₡10000</strong>
-                            <button class="btn btn-sm btn-color"><i class="bi bi-cart-plus me-1"></i> Agregar al carrito</button>
+        <h2 class="mb-4">Productos destacados</h2>
+        <div class="row g-5">
+            <?php foreach ($listaProductos as $producto): ?>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="producto-card">
+                    <?php if (!empty($producto['primeraImagen'])): ?>
+                        <img src="../assets/image/productos/<?php echo $producto['idProducto']; ?>/<?php echo htmlspecialchars($producto['primeraImagen']); ?>"
+                             class="img-fluid producto-imagen"
+                             alt="<?php echo htmlspecialchars($producto['nombreProducto']); ?>"
+                             style="height: 280px; width: 100%; object-fit: contain; border-radius: 8px;">
+                    <?php else: ?>
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 280px; border-radius: 8px;">
+                            <i class="bi bi-image fs-1 text-muted"></i>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    <?php endif; ?>
 
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card h-100">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:180px">Imagen 2</div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Título 2</h5>
-                        <p class="card-text">Descripcion breve del producto 2.</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <strong>Precio: ₡20000</strong>
-                            <button class="btn btn-sm btn-color"><i class="bi bi-cart-plus me-1"></i> Agregar al carrito</button>
+                    <!-- Información del producto -->
+                    <div class="producto-info mt-3">
+                        <h6 class="producto-nombre mb-1"><?php echo htmlspecialchars($producto['nombreProducto']); ?></h6>
+                        <p class="producto-marca text-muted mb-2"><?php echo htmlspecialchars($producto['marca']); ?></p>
+                        <p class="producto-descripcion small text-muted mb-3"><?php echo htmlspecialchars(substr($producto['descripcionProducto'], 0, 80)); ?>...</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="producto-precio">₡<?php echo number_format($producto['precioProducto'], 0, ',', '.'); ?></span>
+                            <button class="btn btn-sm btn-color">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card h-100">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:180px">Imagen 3</div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Título 3</h5>
-                        <p class="card-text">Descripcion breve del producto 3.</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <strong>Precio: ₡300</strong>
-                            <button class="btn btn-sm btn-color"><i class="bi bi-cart-plus me-1"></i> Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card h-100">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:180px">Imagen 4</div>
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">Título 4</h5>
-                        <p class="card-text">Descripcion breve del producto 4.</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
-                            <strong>Precio: ₡400000</strong>
-                            <button class="btn btn-sm btn-color"><i class="bi bi-cart-plus me-1"></i> Agregar al carrito</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 

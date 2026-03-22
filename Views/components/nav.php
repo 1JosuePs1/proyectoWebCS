@@ -1,24 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NAV </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-    <link rel="stylesheet" href="../assets/css/home.css">
-    <link rel="stylesheet" href="../assets/css/main.css">
-</head>
-
-<body>
     <!-- Navbar -->
-    
-
-    <nav class="navbar navbar-expand-lg bg-red-custom">
+<nav class="navbar navbar-expand-lg bg-red-custom">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img src="../assets/image/imgLogo/logo.png" class="img-fluid" width="100" alt="Logo de la tienda"></a>
+            <a class="navbar-brand" href="/proyectoWebCS/index.php"><img src="/proyectoWebCS/Views/assets/image/imgLogo/logoBlanco.png" class="img-fluid" width="100" alt="Logo de la tienda"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -54,9 +37,3 @@
             </div>
         </div>
     </nav>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-  
-</body>
-</html>

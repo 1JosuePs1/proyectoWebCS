@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Redirige /producto/slug a /Views/producto/producto.php?nombre=slug
+RewriteRule ^producto/([a-zA-Z0-9\-]+)$ Views/producto/producto.php?nombre=$1 [L,QSA]
+
+# Opcional: redirige /producto/ a la tienda principal
+RewriteRule ^producto/?$ index.php [L]

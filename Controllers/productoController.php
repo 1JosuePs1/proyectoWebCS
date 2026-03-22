@@ -1,14 +1,32 @@
+
 <?php
+include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/slugify.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/productosModel.php";
+
+function ObtenerProductoDetallePorNombreController($nombreProducto)
+{
+    $p = ObtenerProductoPorNombreModel($nombreProducto);
+    if ($p && isset($p['imagenProducto'])) {
+        $imagenes = json_decode($p['imagenProducto'], true);
+        $p['imagen'] = (isset($imagenes[0]) && $imagenes[0])
+            ? '/proyectoWebCS/Views/assets/image/productos/' . $p['idProducto'] . '/' . $imagenes[0]
+            : '/proyectoWebCS/Views/assets/image/imgLogo/logo.png';
+    } else {
+        $p['imagen'] = '/proyectoWebCS/Views/assets/image/imgLogo/logo.png';
+    }
+    return $p;
+}
 
 function ObtenerProductoDetalleController($idProducto)
 {
     $p = ObtenerProductoPorIdModel($idProducto);
     if ($p && isset($p['imagenProducto'])) {
         $imagenes = json_decode($p['imagenProducto'], true);
-        $p['imagen'] = isset($imagenes[0]) ? '../assets/image/productos/' . $p['idProducto'] . '/' . $imagenes[0] : '../assets/image/imgLogo/logo.png';
+        $p['imagen'] = (isset($imagenes[0]) && $imagenes[0])
+            ? '/proyectoWebCS/Views/assets/image/productos/' . $p['idProducto'] . '/' . $imagenes[0]
+            : '/proyectoWebCS/Views/assets/image/imgLogo/logo.png';
     } else {
-        $p['imagen'] = '../assets/image/imgLogo/logo.png';
+        $p['imagen'] = '/proyectoWebCS/Views/assets/image/imgLogo/logo.png';
     }
     return $p;
 }
@@ -81,4 +99,19 @@ function ObtenerProductoPorIdController($idProducto)
 {
     return ObtenerProductoPorIdModel($idProducto);
 }
+
+
+
+$p = null;
+if (isset($_GET['nombre'])) {
+    $nombreProducto = $_GET['nombre'];
+    $p = ObtenerProductoDetallePorNombreController($nombreProducto);
+} elseif (isset($_GET['id'])) {
+    $idProducto = intval($_GET['id']);
+    $p = ObtenerProductoDetalleController($idProducto);
+}
+
+
 ?>
+
+

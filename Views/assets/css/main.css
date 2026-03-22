@@ -1,3 +1,36 @@
+/* NAVBAR BLANCO SOBRE ROJO */
+.navbar.bg-red-custom {
+    background: #e53935 !important;
+}
+.navbar.bg-red-custom .navbar-nav .nav-link,
+.navbar.bg-red-custom .navbar-brand,
+.navbar.bg-red-custom .btn,
+.navbar.bg-red-custom .form-control,
+.navbar.bg-red-custom .bi {
+    color: #fff !important;
+    transition: 333ms;
+}
+.navbar.bg-red-custom .nav-link.active,
+.navbar.bg-red-custom .nav-link:hover {
+    color: #ffffff !important;
+    text-decoration: none;
+    text-shadow: 0 2px 5px #ffffff51;
+    transform: scale(1.05);
+}
+.navbar.bg-red-custom .btn-outline-light {
+    color: #fff;
+    border-color: #fff;
+    background-color: #e53935 !important;
+}
+.navbar.bg-red-custom .btn-outline-light:hover {
+    background: #fff;
+    color: #e53935;
+    scale: 1.05;
+}
+.navbar.bg-red-custom .form-control {
+    background: #fff;
+    color: #e53935;
+}
 /* Sticky Footer */
 html, body {
     height: 100%;
@@ -33,13 +66,17 @@ footer, .footer {
     color: #111 !important;
 }
 .navbar .btn-user:focus, .navbar .btn-user:hover {
-    background: #f3f3f3;
+  
     color: #e42327 !important;
+     color: #ffffff !important;
+    text-decoration: none;
+    text-shadow: 0 2px 5px #ffffff51;
+    transform: scale(1.05);
 }
 
 /* Botón de salir fondo rojo, icono grande */
 .navbar .btn-logout {
-    background: #e42327 !important;
+    
     border: none !important;
     box-shadow: none;
     padding: 0.3rem 0.7rem;
@@ -51,8 +88,12 @@ footer, .footer {
     color: #fff !important;
 }
 .navbar .btn-logout:focus, .navbar .btn-logout:hover {
-    background: #b21a1e !important;
+  color: #ffffff !important;
+    text-decoration: none;
+    text-shadow: 0 2px 5px #ffffff51;
+    transform: scale(1.05);
     color: #fff !important;
+    
 }
 /* Fondo rojo personalizado para navbar */
 .bg-red-custom {

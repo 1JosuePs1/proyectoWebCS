@@ -1,5 +1,21 @@
-
 <?php
+include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/slugify.php";
+function ObtenerProductoPorNombreModel($slugNombre)
+{
+    $conexion = OpenDatabase();
+    $consultaSQL = "SELECT * FROM producto";
+    $resultado = $conexion->query($consultaSQL);
+    $producto = null;
+    while ($row = $resultado->fetch_assoc()) {
+        if (slugify($row['nombreProducto']) === $slugNombre) {
+            $producto = $row;
+            break;
+        }
+    }
+    $resultado->free();
+    CloseDatabase($conexion);
+    return $producto;
+}
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/UtilitarioModel.php";
 
 function registrarProductoModel($idCategoria, $nombre, $marca, $descripcion, $precio, $stock, $imagenJson)
@@ -82,3 +98,5 @@ function ObtenerProductoPorIdModel($idProducto)
     CloseDatabase($conexion);
     return $producto;
 }
+
+

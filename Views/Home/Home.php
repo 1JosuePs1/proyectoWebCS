@@ -181,40 +181,7 @@ $categorias = ObtenerCategoriasController();
     <div class="container my-5">
         <h2 class="mb-4">Productos destacados</h2>
         <div class="row g-5">
-            <?php foreach ($listaProductos as $producto): ?>
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="producto-card">
-                    <?php if (!empty($producto['primeraImagen'])): ?>
-                            <img src="../assets/image/productos/<?php echo $producto['idProducto']; ?>/<?php echo htmlspecialchars($producto['primeraImagen']); ?>"
-                                class="img-fluid producto-imagen card-img-producto"
-                                alt="<?php echo htmlspecialchars($producto['nombreProducto']); ?>">
-                    <?php else: ?>
-                        <div class="bg-light d-flex align-items-center justify-content-center card-img-producto">
-                            <i class="bi bi-image fs-1 text-muted"></i>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- Información del producto -->
-                    <div class="producto-info mt-3">
-                        <h6 class="producto-nombre mb-1"><?php echo htmlspecialchars($producto['nombreProducto']); ?></h6>
-                        <p class="producto-marca text-muted mb-2"><?php echo htmlspecialchars($producto['marca']); ?></p>
-                        <p class="producto-descripcion small text-muted mb-3"><?php echo htmlspecialchars(substr($producto['descripcionProducto'], 0, 80)); ?>...</p>
-                        
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="producto-precio">₡<?php echo number_format($producto['precioProducto'], 0, ',', '.'); ?></span>
-                            <div class="d-flex">
-                                <button class="btn btn-sm btn-color me-1" title="Agregar al carrito">
-                                    <i class="bi bi-cart-plus"></i>
-                                </button>
-                                <a href="../producto/producto.php?id=<?php echo urlencode($producto['idProducto']); ?>" class="btn btn-sm btn-color" title="Ver producto">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?>
+            <?php include $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Views/components/cardProducto.php"; ?>
         </div>
     </div>
 
@@ -222,6 +189,6 @@ $categorias = ObtenerCategoriasController();
     <?php require('../components/footer.php')?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="../assets/js/home.js"></script>
+    <script src="/proyectoWebCS/Views/assets/js/home.js"></script>
 </body>
 </html>

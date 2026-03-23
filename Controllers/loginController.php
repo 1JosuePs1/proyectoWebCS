@@ -1,34 +1,37 @@
 <?php
 session_start();
-require_once("../config/conexion.php");
+include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/registroModel.php";
 
-$correo = trim($_POST['correoUsuario']);
-$password = trim($_POST['passwordUsuario']);
+function LoginController($correo, $password)
+{
+    $usuario = ValidarAccesoModel($correo);
 
-if (empty($correo) || empty($password)) {
-    die("Todos los campos son obligatorios");
+    if ($usuario && password_verify($password, $usuario['passwordUsuario'])) {
+        return $usuario;
+    }
+    return null;
 }
 
-$sql = "SELECT * FROM usuario WHERE emailUsuario = ? AND estadoUsuario = 'activo'";
-$stmt = $conexion->prepare($sql);
-$stmt->bind_param("s", $correo);
-$stmt->execute();
-$resultado = $stmt->get_result();
+// Procesar POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-if ($resultado->num_rows === 1) {
-    $usuario = $resultado->fetch_assoc();
+    $correo = trim($_POST['correoUsuario'] ?? '');
+    $password = trim($_POST['passwordUsuario'] ?? '');
 
-    if (password_verify($password, $usuario['passwordUsuario'])) {
-    $_SESSION['idUsuario'] = $usuario['idUsuario'];
-    $_SESSION['nombreCompleto'] = $usuario['nombreCompleto'];
-    $_SESSION['idRol'] = $usuario['idRol'];
+    if (empty($correo) || empty($password)) {
+        die("Todos los campos son obligatorios");
+    }
 
-    header("Location: ../Views/Home/Home.php");
-    exit();
-} else {
-    die("Contraseña incorrecta");
+    $usuario = LoginController($correo, $password);
+
+    if ($usuario) {
+        $_SESSION['idUsuario'] = $usuario['idUsuario'];
+        $_SESSION['nombreCompleto'] = $usuario['nombreCompleto'];
+        $_SESSION['idRol'] = $usuario['idRol'];
+
+        header("Location: ../Views/Home/Home.php");
+        exit();
+    } else {
+        die("Usuario no encontrado o contraseña incorrecta");
+    }
 }
-} else {
-    die("Usuario no encontrado o inactivo");
-}
-?>

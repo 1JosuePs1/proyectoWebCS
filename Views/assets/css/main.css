@@ -101,10 +101,7 @@ footer, .footer {
 }
 
 /* Navbar: texto, íconos y logo en negro */
-.navbar, .navbar * {
-    color: #111 !important;
-    fill: #111 !important;
-}
+
 .navbar .navbar-brand img {
     filter: none !important;
 }
@@ -284,4 +281,9 @@ footer p, footer a, footer small {
 .textLink a {
     color: var(--primer-color) !important;
     text-decoration: none;
+}
+
+.nombreUsuario{
+    color: #fff ;
+    font-size: 16px;
 }

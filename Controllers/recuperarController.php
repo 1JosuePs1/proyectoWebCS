@@ -38,8 +38,9 @@ $stmt = $conexion->prepare($sqlActualizar);
 $stmt->bind_param("ss", $passwordHash, $correo);
 
 if ($stmt->execute()) {
-    echo "Contraseña actualizada correctamente";
+    header("Location: ../index.php");
+    exit();
 } else {
-    echo "Error al actualizar la contraseña";
+    die("Error al actualizar la contraseña");
 }
 ?>

@@ -1,9 +1,10 @@
 <?php
-require_once("../config/conexion.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/recuperarModel.php");
+require_once($_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/correoController.php");
 
-$correo = trim($_POST['correoUsuario']);
-$nuevaPassword = trim($_POST['nuevaPassword']);
-$confirmarPassword = trim($_POST['confirmarPassword']);
+$correo = trim($_POST['correoUsuario'] ?? '');
+$nuevaPassword = trim($_POST['nuevaPassword'] ?? '');
+$confirmarPassword = trim($_POST['confirmarPassword'] ?? '');
 
 if (empty($correo) || empty($nuevaPassword) || empty($confirmarPassword)) {
     die("Todos los campos son obligatorios");
@@ -21,23 +22,16 @@ if ($nuevaPassword !== $confirmarPassword) {
     die("Las contraseñas no coinciden");
 }
 
-$sqlVerificar = "SELECT idUsuario FROM usuario WHERE emailUsuario = ?";
-$stmt = $conexion->prepare($sqlVerificar);
-$stmt->bind_param("s", $correo);
-$stmt->execute();
-$resultado = $stmt->get_result();
+$usuario = VerificarCorreoUsuarioModel($correo);
 
-if ($resultado->num_rows === 0) {
+if (!$usuario) {
     die("Ese correo no está registrado");
 }
 
 $passwordHash = password_hash($nuevaPassword, PASSWORD_DEFAULT);
 
-$sqlActualizar = "UPDATE usuario SET passwordUsuario = ? WHERE emailUsuario = ?";
-$stmt = $conexion->prepare($sqlActualizar);
-$stmt->bind_param("ss", $passwordHash, $correo);
-
-if ($stmt->execute()) {
+if (ActualizarPasswordUsuarioModel($correo, $passwordHash)) {
+    EnviarCorreo("Recuperar Acceso", $nuevaPassword, $correo);
     header("Location: ../index.php");
     exit();
 } else {

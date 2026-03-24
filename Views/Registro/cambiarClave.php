@@ -97,11 +97,11 @@
                 }
 
                 if (nuevaPassword === "") {
-                    $("#errorNuevaPassword").text("Debe ingresar una nueva contrasena");
+                    $("#errorNuevaPassword").text("Debe ingresar una nueva contraseña");
                     $("#nuevaPassword").addClass("is-invalid");
                     valido = false;
                 } else if (!passwordRegex.test(nuevaPassword)) {
-                    $("#errorNuevaPassword").text("La contrasena debe tener minimo 8 caracteres, una mayuscula, un numero y un caracter especial");
+                    $("#errorNuevaPassword").text("La contraseña debe tener minimo 8 caracteres, una mayuscula, un numero y un caracter especial");
                     $("#nuevaPassword").addClass("is-invalid");
                     valido = false;
                 } else {
@@ -109,11 +109,11 @@
                 }
 
                 if (confirmarPassword === "") {
-                    $("#errorConfirmarPassword").text("Debe confirmar la contrasena");
+                    $("#errorConfirmarPassword").text("Debe confirmar la contraseña");
                     $("#confirmarPassword").addClass("is-invalid");
                     valido = false;
                 } else if (nuevaPassword !== confirmarPassword) {
-                    $("#errorConfirmarPassword").text("Las contrasenas no coinciden");
+                    $("#errorConfirmarPassword").text("Las contraseñas no coinciden");
                     $("#confirmarPassword").addClass("is-invalid");
                     valido = false;
                 } else {

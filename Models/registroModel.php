@@ -34,7 +34,8 @@ function VerificarCorreoExistenteModel($correo)
     $consultaPreparada->close();
     $conexion->next_result();
     CloseDatabase($conexion);
-    return $fila['total'] > 0;
+
+    return $fila ? true : false;
 }
 
 function RegistrarUsuarioModel($nombre, $correo, $passwordHash)
@@ -44,13 +45,13 @@ function RegistrarUsuarioModel($nombre, $correo, $passwordHash)
     $consultaSQL = "CALL sp_RegistrarUsuario(?, ?, ?)";
     $consultaPreparada = $conexion->prepare($consultaSQL);
     $consultaPreparada->bind_param("sss", $nombre, $correo, $passwordHash);
-    $consultaPreparada->execute();
 
-    $resultado = $consultaPreparada->get_result();
-    $fila = $resultado->fetch_assoc();
+    $resultado = $consultaPreparada->execute();
 
     $consultaPreparada->close();
     $conexion->next_result();
     CloseDatabase($conexion);
-    return $fila;
+
+    return $resultado;
 }
+?>

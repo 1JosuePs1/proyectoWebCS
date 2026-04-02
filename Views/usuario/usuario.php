@@ -1,10 +1,5 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['idUsuario'])) {
-    header("Location: /proyectoWebCS/index.php");
-    exit();
-}
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
 
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/usuarioController.php";
 
@@ -50,6 +45,13 @@ $campos = [
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         <?php endif; ?>
+
+                        <?php if (isset($_SESSION['error_usuario'])): ?>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <?= htmlspecialchars($_SESSION['error_usuario']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <?php unset($_SESSION['error_usuario']); endif; ?>
 
                         <form action="../../Controllers/usuarioController.php" method="POST" id="formPerfil">
 

@@ -33,15 +33,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmarPassword = trim($_POST['confirmarPassword'] ?? '');
 
     if (empty($nombreCompleto)) {
-        die("El nombre completo es obligatorio");
+        $_SESSION['error_usuario'] = "El nombre completo es obligatorio";
+        header("Location: ../Views/usuario/usuario.php");
+        exit();
     }
 
     if (!empty($passwordNueva)) {
         if (strlen($passwordNueva) < 8) {
-            die("La contraseña debe tener al menos 8 caracteres");
+            $_SESSION['error_usuario'] = "La contraseña debe tener al menos 8 caracteres";
+            header("Location: ../Views/usuario/usuario.php");
+            exit();
         }
         if ($passwordNueva !== $confirmarPassword) {
-            die("Las contraseñas no coinciden");
+            $_SESSION['error_usuario'] = "Las contraseñas no coinciden";
+            header("Location: ../Views/usuario/usuario.php");
+            exit();
         }
     }
 
@@ -52,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../Views/usuario/usuario.php?actualizado=1");
         exit();
     } else {
-        die("Error al actualizar el perfil");
+        $_SESSION['error_usuario'] = "Error al actualizar el perfil";
+        header("Location: ../Views/usuario/usuario.php");
+        exit();
     }
 }

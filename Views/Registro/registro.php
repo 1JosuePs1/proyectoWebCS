@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -8,6 +9,7 @@
 
     <!-- CONEXION CON BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <!-- CONEXION CON JQUERY -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -71,87 +73,19 @@
     </div>
 
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="/proyectoWebCS/Views/assets/js/validarRegistro.js"></script>
+    <script src="/proyectoWebCS/Views/assets/js/modalError.js"></script>
+
+    <?php include $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Views/components/modalError.php"; ?>
+
+    <?php if (isset($_SESSION['error_registro'])): ?>
     <script>
-        $(document).ready(function () {
-
-            $("#formAuth").submit(function (e) {
-                let nombre = $("#InputName").val().trim();
-                let correo = $("#InputEmail").val().trim();
-                let password = $("#InputPassword").val().trim();
-                let confirmPassword = $("#InputPasswordConfirm").val().trim();
-
-                let correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                let passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-                let valido = true;
-
-                $("#errorNombre").text("");
-                $("#errorCorreo").text("");
-                $("#errorPassword").text("");
-                $("#errorConfirmPassword").text("");
-
-                $("#InputName").removeClass("is-invalid is-valid");
-                $("#InputEmail").removeClass("is-invalid is-valid");
-                $("#InputPassword").removeClass("is-invalid is-valid");
-                $("#InputPasswordConfirm").removeClass("is-invalid is-valid");
-
-                if (nombre === "") {
-                    $("#errorNombre").text("Debe ingresar el nombre completo");
-                    $("#InputName").addClass("is-invalid");
-                    valido = false;
-                } else if (nombre.length < 3) {
-                    $("#errorNombre").text("El nombre debe tener al menos 3 caracteres");
-                    $("#InputName").addClass("is-invalid");
-                    valido = false;
-                } else {
-                    $("#InputName").addClass("is-valid");
-                }
-
-                if (correo === "") {
-                    $("#errorCorreo").text("Debe ingresar un correo electrónico");
-                    $("#InputEmail").addClass("is-invalid");
-                    valido = false;
-                } else if (!correoRegex.test(correo)) {
-                    $("#errorCorreo").text("Debe ingresar un correo válido");
-                    $("#InputEmail").addClass("is-invalid");
-                    valido = false;
-                } else {
-                    $("#InputEmail").addClass("is-valid");
-                }
-
-                if (password === "") {
-                    $("#errorPassword").text("Debe ingresar una contraseña");
-                    $("#InputPassword").addClass("is-invalid");
-                    valido = false;
-                } else if (!passwordRegex.test(password)) {
-                    $("#errorPassword").text("La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un carácter especial");
-                    $("#InputPassword").addClass("is-invalid");
-                    valido = false;
-                } else {
-                    $("#InputPassword").addClass("is-valid");
-                }
-
-                if (confirmPassword === "") {
-                    $("#errorConfirmPassword").text("Debe confirmar la contraseña");
-                    $("#InputPasswordConfirm").addClass("is-invalid");
-                    valido = false;
-                } else if (password !== confirmPassword) {
-                    $("#errorConfirmPassword").text("Las contraseñas no coinciden");
-                    $("#InputPasswordConfirm").addClass("is-invalid");
-                    valido = false;
-                } else {
-                    $("#InputPasswordConfirm").addClass("is-valid");
-                }
-
-                if (!valido) {
-                    e.preventDefault();
-                }
-            });
-
+        document.addEventListener('DOMContentLoaded', function() {
+            mostrarModalError(<?= json_encode($_SESSION['error_registro']) ?>);
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <?php unset($_SESSION['error_registro']); endif; ?>
 </body>
 
 </html>

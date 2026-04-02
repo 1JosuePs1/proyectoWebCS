@@ -19,7 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['passwordUsuario'] ?? '');
 
     if (empty($correo) || empty($password)) {
-        die("Todos los campos son obligatorios");
+        $_SESSION['error_login'] = "Todos los campos son obligatorios";
+        header("Location: ../Views/Registro/login.php");
+        exit();
     }
 
     $usuario = LoginController($correo, $password);
@@ -32,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../Views/Home/Home.php");
         exit();
     } else {
-        die("Usuario no encontrado o contraseña incorrecta");
+        $_SESSION['error_login'] = "Usuario no encontrado o contraseña incorrecta";
+        header("Location: ../Views/Registro/login.php");
+        exit();
     }
 }

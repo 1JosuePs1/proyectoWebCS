@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasController.php";
 
 $listaProductos = ObtenerProductosController();
@@ -152,7 +152,7 @@ $listaProductos = ObtenerProductosController();
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             <button class="btn btn-accion btn-outline-danger ms-1" title="Eliminar"
-                                                    onclick="confirmarEliminar(<?= $producto['idProducto'] ?>, '<?= htmlspecialchars(addslashes($producto['nombreProducto'])) ?>')">
+                                                    onclick="confirmarEliminar(<?= $producto['idProducto'] ?>, <?= htmlspecialchars(json_encode($producto['nombreProducto'])) ?>)">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </td>
@@ -189,13 +189,7 @@ $listaProductos = ObtenerProductosController();
     <?php require('../components/footer.php') ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script>
-        function confirmarEliminar(id, nombre) {
-            document.getElementById('nombreProductoEliminar').textContent = nombre;
-            document.getElementById('btnConfirmarEliminar').href = '../../Controllers/productoController.php?eliminar=' + id;
-            new bootstrap.Modal(document.getElementById('modalEliminar')).show();
-        }
-    </script>
+    <script src="/proyectoWebCS/Views/assets/js/listaProductos.js"></script>
 </body>
 
 </html>

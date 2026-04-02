@@ -1,3 +1,4 @@
+<?php include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/carritoController.php"; ?>
     <!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-red-custom">
         <div class="container-fluid">
@@ -24,7 +25,14 @@
                         <button class="btn btn-outline-light" type="submit">Buscar</button>
                     </form>
                     <li class="nav-item">   
-                        <a class="nav-link bold" href="#"><i class="bi bi-cart"></i> Carrito</a>
+                        <a class="nav-link bold position-relative" href="/proyectoWebCS/Views/Home/carrito.php">
+                            <i class="bi bi-cart"></i> Carrito
+                            <?php $totalItemsNav = ObtenerTotalItemsCarrito(); if ($totalItemsNav > 0): ?>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.65rem;">
+                                    <?= $totalItemsNav ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
                     </li>
 
                     <?php if (isset($_SESSION['idUsuario'])): ?>

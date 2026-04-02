@@ -1,4 +1,5 @@
 <?php
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/productoController.php";
 
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasController.php";
@@ -54,7 +55,11 @@ $categorias = ObtenerCategoriasController();
                     <h1 class="producto-titulo"><?php echo htmlspecialchars($p['nombreProducto']); ?></h1>
                     <p class=" text-muted small">Número de ítem: <?php echo $p['idProducto']; ?></p>
                     <div class="producto-precio">₡<?php echo number_format($p['precioProducto'], 0); ?></div>
-                    <button class="btn-primary producto-boton">Añadir al carrito</button>
+                    <form action="/proyectoWebCS/Controllers/carritoController.php" method="POST">
+                        <input type="hidden" name="accion" value="agregar">
+                        <input type="hidden" name="idProducto" value="<?php echo $p['idProducto']; ?>">
+                        <button type="submit" class="btn-primary producto-boton">Añadir al carrito</button>
+                    </form>
                     <div class="producto-disponibilidad">
                         <span class="badge bg-success">En stock: <?php echo number_format($p['stockProducto'], 0); ?></span>
                     </div>
@@ -75,17 +80,7 @@ $categorias = ObtenerCategoriasController();
             </div>
         </div>
     </div>
-        <script>
-           
-            function mostrarImagen(idx) {
-                var miniaturas = document.querySelectorAll('.producto-galeria-miniaturas img');
-                var principal = document.getElementById('imgPrincipal');
-                miniaturas.forEach(function(img, i) {
-                    img.classList.toggle('active', i === idx);
-                });
-                principal.src = miniaturas[idx].src;
-            }
-        </script>
+    <script src="/proyectoWebCS/Views/assets/js/producto.js"></script>
 
     <?php require($_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Views/components/footer.php"); ?>
 </body>

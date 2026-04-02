@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/registroModel.php";
 
 function VerificarCorreoExistenteController($correo)
@@ -26,23 +27,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirmar = trim($_POST['confirmPassword'] ?? '');
 
     if (empty($nombre) || empty($correo) || empty($password) || empty($confirmar)) {
-        die("Todos los campos son obligatorios");
+        $_SESSION['error_registro'] = "Todos los campos son obligatorios";
+        header("Location: ../Views/Registro/registro.php");
+        exit();
     }
 
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        die("El correo electrónico no es válido");
+        $_SESSION['error_registro'] = "El correo electrónico no es válido";
+        header("Location: ../Views/Registro/registro.php");
+        exit();
     }
 
     if (strlen($password) < 8) {
-        die("La contraseña debe tener al menos 8 caracteres");
+        $_SESSION['error_registro'] = "La contraseña debe tener al menos 8 caracteres";
+        header("Location: ../Views/Registro/registro.php");
+        exit();
     }
 
     if ($password !== $confirmar) {
-        die("Las contraseñas no coinciden");
+        $_SESSION['error_registro'] = "Las contraseñas no coinciden";
+        header("Location: ../Views/Registro/registro.php");
+        exit();
     }
 
     if (VerificarCorreoExistenteController($correo)) {
-        die("Ese correo ya está registrado");
+        $_SESSION['error_registro'] = "Ese correo ya está registrado";
+        header("Location: ../Views/Registro/registro.php");
+        exit();
     }
 
     $resultado = RegistrarUsuarioController($nombre, $correo, $password);
@@ -51,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: ../index.php");
         exit();
     } else {
-        die("Error al registrar usuario");
+        $_SESSION['error_registro'] = "Error al registrar usuario";
+        header("Location: ../Views/Registro/registro.php");
+        exit();
     }
 }

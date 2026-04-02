@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
 
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/dashboardController.php";
 

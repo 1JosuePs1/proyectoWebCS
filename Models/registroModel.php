@@ -32,10 +32,16 @@ function VerificarCorreoExistenteModel($correo)
     $fila = $resultado->fetch_assoc();
 
     $consultaPreparada->close();
-    $conexion->next_result();
+    
+    
+    $existe = ($fila && $fila['total'] > 0);
+
+    
+    while($conexion->next_result()) $conexion->store_result();
+    
     CloseDatabase($conexion);
 
-    return $fila ? true : false;
+    return $existe;
 }
 
 function RegistrarUsuarioModel($nombre, $correo, $passwordHash)

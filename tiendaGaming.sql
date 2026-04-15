@@ -452,4 +452,26 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosPorCategoria` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductosPorCategoria`(IN p_idCategoria INT)
+BEGIN
+    SELECT
+        idProducto,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
+    FROM producto
+    WHERE estadoProducto = 'disponible'
+      AND idCategoria = p_idCategoria;
+END ;;
+DELIMITER ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+
 -- Dump completed on 2026-03-25  0:37:04

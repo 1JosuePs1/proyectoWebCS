@@ -54,8 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
  
     updateButtonStates();
-    
- 
+
+    const activeItem = slider.querySelector('.category-item.active');
+    if (activeItem) {
+        const offsetLeft = activeItem.offsetLeft - slider.clientWidth / 2 + activeItem.offsetWidth / 2;
+        slider.scrollLeft = offsetLeft;
+        updateButtonStates();
+    }
 });
 
 // Slider de imágenes por producto

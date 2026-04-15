@@ -3,9 +3,41 @@
 require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasController.php";
 
-$listaProductos = ObtenerProductosController();
 $categorias = ObtenerCategoriasController();
-?> 
+
+$idCategoriaFiltro = isset($_GET['categoria']) ? intval($_GET['categoria']) : null;
+$listaProductos = $idCategoriaFiltro
+    ? ObtenerProductosPorCategoriaController($idCategoriaFiltro)
+    : ObtenerProductosController();
+
+$nombreCategoriaActual = null;
+if ($idCategoriaFiltro) {
+    foreach ($categorias as $cat) {
+        if ($cat['idCategoria'] == $idCategoriaFiltro) {
+            $nombreCategoriaActual = $cat['nombreCategoria'];
+            break;
+        }
+    }
+}
+
+$iconosPorCategoria = [
+    'teclados'            => 'bi-keyboard',
+    'mouses'              => 'bi-mouse',
+    'monitores'           => 'bi-display',
+    'audifonos'           => 'bi-headphones',
+    'componentes'         => 'bi-cpu',
+    'computadoras'        => 'bi-laptop',
+    'impresoras'          => 'bi-printer',
+    'gaming streaming'    => 'bi-joystick',
+    'conectividad redes'  => 'bi-wifi',
+    'periféricos'         => 'bi-pc-display-horizontal',
+    'audio'               => 'bi-speaker',
+    'energía'             => 'bi-lightning-charge',
+    'almacenamiento'      => 'bi-hdd-rack',
+    'seguridad'           => 'bi-shield',
+    'accesorios'          => 'bi-tools',
+];
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -79,96 +111,26 @@ $categorias = ObtenerCategoriasController();
             </button>
             
             <div class="categories-slider" id="categoriesSlider">
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-laptop"></i>
+                <a href="/proyectoWebCS/Views/Home/Home.php" class="text-decoration-none">
+                    <div class="category-item <?= !$idCategoriaFiltro ? 'active' : '' ?>">
+                        <div class="category-img">
+                            <i class="bi bi-grid"></i>
+                        </div>
+                        <p class="category-name">Todos</p>
                     </div>
-                    <p class="category-name">Computadoras</p>
-                </div>
-                
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-cpu"></i>
+                </a>
+                <?php foreach ($categorias as $cat):
+                    $icono = $iconosPorCategoria[strtolower($cat['nombreCategoria'])] ?? 'bi-box';
+                ?>
+                <a href="/proyectoWebCS/Views/Home/Home.php?categoria=<?= $cat['idCategoria'] ?>" class="text-decoration-none">
+                    <div class="category-item <?= ($idCategoriaFiltro == $cat['idCategoria']) ? 'active' : '' ?>">
+                        <div class="category-img">
+                            <i class="bi <?= $icono ?>"></i>
+                        </div>
+                        <p class="category-name"><?= htmlspecialchars($cat['nombreCategoria']) ?></p>
                     </div>
-                    <p class="category-name">Componentes</p>
-                </div>
-                
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-printer"></i>
-                    </div>
-                    <p class="category-name">Impresoras</p>
-                </div>
-                
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-joystick"></i>
-                    </div>
-                    <p class="category-name">Gaming Streaming</p>
-                </div>
-                
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-wifi"></i>
-                    </div>
-                    <p class="category-name">Conectividad Redes</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-mouse"></i>
-                    </div>
-                    <p class="category-name">Periféricos</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-headphones"></i>
-                    </div>
-                    <p class="category-name">Audio</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-display"></i>
-                    </div>
-                    <p class="category-name">Monitores</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-keyboard"></i>
-                    </div>
-                    <p class="category-name">Teclados</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-lightning-charge"></i>
-                    </div>
-                    <p class="category-name">Energía</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-hdd-rack"></i>
-                    </div>
-                    <p class="category-name">Almacenamiento</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-shield"></i>
-                    </div>
-                    <p class="category-name">Seguridad</p>
-                </div>
-
-                <div class="category-item">
-                    <div class="category-img">
-                        <i class="bi bi-tools"></i>
-                    </div>
-                    <p class="category-name">Accesorios</p>
-                </div>
+                </a>
+                <?php endforeach; ?>
             </div>
             
             <button class="slider-btn slider-btn-next" id="nextBtn">
@@ -179,7 +141,7 @@ $categorias = ObtenerCategoriasController();
 
     <!-- Main -->
     <div class="container my-5">
-        <h2 class="mb-4">Productos destacados</h2>
+        <h2 class="mb-4"><?= $nombreCategoriaActual ? htmlspecialchars($nombreCategoriaActual) : 'Productos destacados' ?></h2>
         <div class="row g-5">
             <?php include $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Views/components/cardProducto.php"; ?>
         </div>

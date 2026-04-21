@@ -27,6 +27,20 @@ $totalItems = ObtenerTotalItemsCarrito();
     <div class="container my-5">
         <h3 class="mb-4"><i class="bi bi-cart3 me-2"></i>Mi Carrito <span class="text-muted fs-6">(<?= $totalItems ?> productos)</span></h3>
 
+        <?php if (isset($_SESSION['ok_carrito'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['ok_carrito']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['ok_carrito']); endif; ?>
+
+        <?php if (isset($_SESSION['error_carrito'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['error_carrito']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['error_carrito']); endif; ?>
+
         <?php if (empty($productosCarrito)): ?>
             <div class="text-center py-5">
                 <i class="bi bi-cart-x fs-1 text-muted d-block mb-3"></i>
@@ -117,9 +131,9 @@ $totalItems = ObtenerTotalItemsCarrito();
                                 <span style="color: var(--primer-color);">₡<?= number_format($totalCarrito, 0, ',', '.') ?></span>
                             </div>
                             <div class="d-grid mt-4">
-                                <button class="btn btn-lg text-white" style="background-color: var(--primer-color);">
+                                <a href="/proyectoWebCS/Views/Home/pago.php" class="btn btn-lg text-white w-100" style="background-color: var(--primer-color);">
                                     <i class="bi bi-bag-check me-2"></i>Proceder al pago
-                                </button>
+                                </a>
                             </div>
                             <div class="text-center mt-3">
                                 <a href="/proyectoWebCS/Views/Home/Home.php" class="text-muted small">

@@ -36,6 +36,32 @@ function registrarProductoModel($idCategoria, $nombre, $marca, $descripcion, $pr
     return $idProductoInsertado;
 }
 
+function editarProductoModel($idProducto, $idCategoria, $nombre, $marca, $descripcion, $precio, $stock)
+{
+    $conexion = OpenDatabase();
+
+    $consultaSQL = "CALL sp_EditarProductoAdmin(?, ?, ?, ?, ?, ?, ?)";
+    $consultaPreparada = $conexion->prepare($consultaSQL);
+    if (!$consultaPreparada) {
+        CloseDatabase($conexion);
+        return false;
+    }
+
+    $consultaPreparada->bind_param("iisssdi", $idProducto, $idCategoria, $nombre, $marca, $descripcion, $precio, $stock);
+    $ok = $consultaPreparada->execute();
+
+    $consultaPreparada->close();
+    while ($conexion->next_result()) {
+        $extra = $conexion->store_result();
+        if ($extra) {
+            $extra->free();
+        }
+    }
+    CloseDatabase($conexion);
+
+    return $ok;
+}
+
 function actualizarImagenesProductoModel($idProducto, $imagenJson)
 {
     $conexion = OpenDatabase();
@@ -64,7 +90,30 @@ function ObtenerProductosModel()
     $resultadoProductos->free();
     $conexion->next_result();
     CloseDatabase($conexion);
-    return $listaProductos;
+    return OrdenarProductosPorDisponibilidadModel($listaProductos);
+}
+
+function ProductoEstaAgotadoModel($producto)
+{
+    $stockProducto = intval($producto['stockProducto'] ?? 0);
+    $estadoProducto = strtolower(trim($producto['estadoProducto'] ?? ''));
+    return $stockProducto <= 0 || $estadoProducto === 'agotado';
+}
+
+function OrdenarProductosPorDisponibilidadModel($listaProductos)
+{
+    $disponibles = [];
+    $agotados = [];
+
+    foreach ($listaProductos as $producto) {
+        if (ProductoEstaAgotadoModel($producto)) {
+            $agotados[] = $producto;
+        } else {
+            $disponibles[] = $producto;
+        }
+    }
+
+    return array_merge($disponibles, $agotados);
 }
 
 function ObtenerCategoriasModel()
@@ -114,7 +163,7 @@ function ObtenerProductosPorCategoriaModel($idCategoria)
     $resultado->free();
     $consultaPreparada->close();
     CloseDatabase($conexion);
-    return $listaProductos;
+    return OrdenarProductosPorDisponibilidadModel($listaProductos);
 }
 
 

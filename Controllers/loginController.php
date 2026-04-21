@@ -31,7 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['nombreCompleto'] = $usuario['nombreCompleto'];
         $_SESSION['idRol'] = $usuario['idRol'];
 
-        header("Location: ../Views/Home/Home.php");
+        if (intval($usuario['idRol'] ?? 0) === 1) {
+            header("Location: ../Views/Admin/dashboard.php");
+        } else {
+            header("Location: ../Views/Home/Home.php");
+        }
         exit();
     } else {
         $_SESSION['error_login'] = "Usuario no encontrado o contraseña incorrecta";

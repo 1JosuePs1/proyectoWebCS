@@ -1,13 +1,9 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/guardAdmin.php";
+RequerirAdminOculto();
+$rutaNavbar = ObtenerRutaNavbarAdmin();
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/pedidoController.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/productosModel.php";
-
-if (intval($_SESSION['idRol'] ?? 0) !== 1) {
-    $_SESSION['error_carrito'] = 'No tienes permisos para entrar a pedidos de admin.';
-    header('Location: /proyectoWebCS/Views/Home/Home.php');
-    exit();
-}
 
 $pedidos = ObtenerPedidosAdminController();
 $pedidosConAccion = [];
@@ -45,13 +41,52 @@ foreach ($pedidos as $filaPedido) {
             background: #f8f9fa;
             padding: 4px;
         }
+
+        .pedido-direccion {
+            min-width: 250px;
+            white-space: normal;
+            line-height: 1.35;
+        }
+
+        .pedido-direccion-linea {
+            word-break: break-word;
+        }
+
+        .pedido-accion {
+            min-width: 145px;
+        }
+
+        .pedido-accion-contenido {
+            display: grid;
+            gap: 0.35rem;
+            justify-items: stretch;
+            width: max-content;
+            margin: 1px auto;
+        }
+
+        .pedido-accion .btn {
+            white-space: nowrap;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.82rem;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 991px) {
+            .pedido-direccion {
+                min-width: 220px;
+            }
+
+            .pedido-accion {
+                min-width: 130px;
+            }
+        }
     </style>
 </head>
 
-<body class="bg-light">
-    <?php require('../components/navAdmin.php')?>
+<body class="bg-light admin-page">
+    <?php require_once $rutaNavbar; ?>
 
-    <div class="container my-5">
+    <div class="container admin-main">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
             <h3 class="mb-0 text-center w-100"><i class="bi bi-box-seam me-2"></i>Pedidos de clientes</h3>
             <a href="/proyectoWebCS/Views/Admin/dashboard.php" class="btn btn-outline-secondary btn-sm">
@@ -127,18 +162,18 @@ foreach ($pedidos as $filaPedido) {
                                     </td>
                                     <td><?= intval($fila['cantidadProductos']) ?></td>
                                     <td>₡<?= number_format(floatval($fila['totalVenta']), 0, ',', '.') ?></td>
-                                    <td class="small text-center">
+                                    <td class="small text-center pedido-direccion">
                                         <div>
                                             <div class="fw-semibold"><?= htmlspecialchars($fila['nombreDestinatario']) ?></div>
-                                            <div><?= htmlspecialchars($fila['telefonoEnvio']) ?></div>
-                                            <div><?= htmlspecialchars($fila['direccionEnvio']) ?></div>
+                                            <div class="pedido-direccion-linea"><?= htmlspecialchars($fila['telefonoEnvio']) ?></div>
+                                            <div class="pedido-direccion-linea"><?= htmlspecialchars($fila['direccionEnvio']) ?></div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="pedido-accion">
                                         <?php if (!isset($pedidosConAccion[$idPedido])): ?>
                                             <?php $pedidosConAccion[$idPedido] = true; ?>
                                             <?php if ($fila['estadoPedido'] === 'pendiente'): ?>
-                                                <form action="/proyectoWebCS/Controllers/pedidoController.php" method="POST">
+                                                <form action="/proyectoWebCS/Controllers/pedidoController.php" method="POST" class="pedido-accion-contenido">
                                                     <input type="hidden" name="accion" value="marcarCompletado">
                                                     <input type="hidden" name="idPedido" value="<?= $idPedido ?>">
                                                     <button type="submit" class="btn btn-sm btn-success">

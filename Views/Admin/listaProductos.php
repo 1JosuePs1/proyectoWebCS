@@ -1,5 +1,7 @@
 <?php
-require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/verificarSesion.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/guardAdmin.php";
+RequerirAdminOculto();
+$rutaNavbar = ObtenerRutaNavbarAdmin();
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasController.php";
 
 $listaProductos = ObtenerProductosController();
@@ -61,11 +63,25 @@ $listaProductos = ObtenerProductosController();
     </style>
 </head>
 
-<body class="bg-light">
+<body class="bg-light admin-page">
 
-    <?php require('../components/navAdmin.php')?>
+    <?php require_once $rutaNavbar; ?>
 
-    <div class="container my-4">
+    <div class="container admin-main">
+
+        <?php if (isset($_SESSION['ok_producto'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['ok_producto']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['ok_producto']); endif; ?>
+
+        <?php if (isset($_SESSION['error_producto'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['error_producto']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['error_producto']); endif; ?>
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">

@@ -4,6 +4,7 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/pedidoContr
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/productosModel.php";
 
 $pedidos = ObtenerPedidosUsuarioController(intval($_SESSION['idUsuario']));
+$pedidosConRecibo = [];
 
 $imagenesProducto = [];
 foreach ($pedidos as $filaPedido) {
@@ -38,6 +39,45 @@ foreach ($pedidos as $filaPedido) {
             background: #f8f9fa;
             padding: 4px;
         }
+
+        .pedido-direccion {
+            min-width: 250px;
+            white-space: normal;
+            line-height: 1.35;
+        }
+
+        .pedido-direccion-linea {
+            word-break: break-word;
+        }
+
+        .pedido-recibo {
+            min-width: 145px;
+        }
+
+        .pedido-recibo-acciones {
+            display: grid;
+            gap: 0.35rem;
+            justify-items: stretch;
+            width: max-content;
+            margin: 1px auto;
+        }
+
+        .pedido-recibo .btn {
+            white-space: nowrap;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.82rem;
+            line-height: 1.2;
+        }
+
+        @media (max-width: 991px) {
+            .pedido-direccion {
+                min-width: 220px;
+            }
+
+            .pedido-recibo {
+                min-width: 130px;
+            }
+        }
     </style>
 </head>
 
@@ -51,6 +91,20 @@ foreach ($pedidos as $filaPedido) {
                 <i class="bi bi-arrow-left me-1"></i>Volver a la tienda
             </a>
         </div>
+
+        <?php if (isset($_SESSION['ok_recibo'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['ok_recibo']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['ok_recibo']); endif; ?>
+
+        <?php if (isset($_SESSION['error_recibo'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($_SESSION['error_recibo']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['error_recibo']); endif; ?>
 
         <?php if (empty($pedidos)): ?>
             <div class="card border-0 shadow-sm rounded-3">
@@ -72,16 +126,18 @@ foreach ($pedidos as $filaPedido) {
                                 <th class="text-center">Cantidad</th>
                                 <th class="text-center">Total orden</th>
                                 <th class="text-center">Direccion de envio</th>
+                                <th class="text-center">Recibo</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($pedidos as $fila): ?>
                                 <?php
+                                    $idPedido = intval($fila['idPedido'] ?? 0);
                                     $idProducto = intval($fila['idProducto'] ?? 0);
                                     $primeraImg = $imagenesProducto[$idProducto] ?? null;
                                 ?>
                                 <tr>
-                                    <td>#<?= intval($fila['idPedido']) ?></td>
+                                    <td>#<?= $idPedido ?></td>
                                     <td><?= htmlspecialchars($fila['fechaPedido']) ?></td>
                                     <td>
                                         <span class="badge rounded-pill <?= $fila['estadoPedido'] === 'completado' ? 'text-bg-success' : 'text-bg-warning' ?>">
@@ -102,12 +158,27 @@ foreach ($pedidos as $filaPedido) {
                                     </td>
                                     <td><?= intval($fila['cantidadProductos']) ?></td>
                                     <td>₡<?= number_format(floatval($fila['totalVenta']), 0, ',', '.') ?></td>
-                                    <td class="small text-center">
+                                    <td class="small text-center pedido-direccion">
                                         <div>
                                             <div class="fw-semibold"><?= htmlspecialchars($fila['nombreDestinatario']) ?></div>
-                                            <div><?= htmlspecialchars($fila['telefonoEnvio']) ?></div>
-                                            <div><?= htmlspecialchars($fila['direccionEnvio']) ?></div>
+                                            <div class="pedido-direccion-linea"><?= htmlspecialchars($fila['telefonoEnvio']) ?></div>
+                                            <div class="pedido-direccion-linea"><?= htmlspecialchars($fila['direccionEnvio']) ?></div>
                                         </div>
+                                    </td>
+                                    <td class="text-center pedido-recibo">
+                                        <?php if (!isset($pedidosConRecibo[$idPedido])): ?>
+                                            <?php $pedidosConRecibo[$idPedido] = true; ?>
+                                            <div class="pedido-recibo-acciones">
+                                                <a href="/proyectoWebCS/Controllers/reciboController.php?accion=descargar&idPedido=<?= $idPedido ?>" class="btn btn-outline-primary btn-sm">
+                                                    <i class="bi bi-download me-1"></i>Descargar
+                                                </a>
+                                                <a href="/proyectoWebCS/Controllers/reciboController.php?accion=enviarCorreo&idPedido=<?= $idPedido ?>" class="btn btn-outline-secondary btn-sm">
+                                                    <i class="bi bi-envelope me-1"></i>Enviar correo
+                                                </a>
+                                            </div>
+                                        <?php else: ?>
+                                            <span class="text-muted small">-</span>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

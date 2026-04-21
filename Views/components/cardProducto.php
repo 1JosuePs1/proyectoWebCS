@@ -32,13 +32,19 @@
             <div class="d-flex justify-content-between align-items-center">
                 <span class="producto-precio">₡<?php echo number_format($producto['precioProducto'], 0, ',', '.'); ?></span>
                 <div class="d-flex">
-                    <form action="/proyectoWebCS/Controllers/carritoController.php" method="POST" class="me-1">
-                        <input type="hidden" name="accion" value="agregar">
-                        <input type="hidden" name="idProducto" value="<?php echo $producto['idProducto']; ?>">
-                        <button type="submit" class="btn btn-sm <?php echo $agotado ? 'btn-secondary disabled' : 'btn-color'; ?>" title="<?php echo $agotado ? 'Sin stock' : 'Agregar al carrito'; ?>" <?php echo $agotado ? 'disabled' : ''; ?>>
+                    <?php if ($agotado): ?>
+                        <button type="button" class="btn btn-sm btn-secondary disabled me-1" title="Sin stock" disabled>
                             <i class="bi bi-cart-plus"></i>
                         </button>
-                    </form>
+                    <?php else: ?>
+                        <form action="/proyectoWebCS/Controllers/carritoController.php" method="POST" class="me-1">
+                            <input type="hidden" name="accion" value="agregar">
+                            <input type="hidden" name="idProducto" value="<?php echo $producto['idProducto']; ?>">
+                            <button type="submit" class="btn btn-sm btn-color" title="Agregar al carrito">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </form>
+                    <?php endif; ?>
                     <a href="/proyectoWebCS/producto/<?php echo slugify($producto['nombreProducto']); ?>" class="btn btn-sm btn-color" title="Ver producto">
                         <i class="bi bi-eye"></i>
                     </a>

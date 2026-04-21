@@ -1,17 +1,19 @@
 <?php
-require_once($_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/PHPMailer/src/PHPMailer.php");
-require_once($_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/PHPMailer/src/SMTP.php");
-require_once($_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/PHPMailer/src/Exception.php");
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+$phpMailerSrc = dirname(__DIR__) . "/PHPMailer/src/";
+require_once($phpMailerSrc . "PHPMailer.php");
+require_once($phpMailerSrc . "SMTP.php");
+require_once($phpMailerSrc . "Exception.php");
 
 function EnviarCorreo($asunto, $contenido, $destinatario)
 {
     $correoSalida = "osaborio90676@ufide.ac.cr";
     $contrasennaSalida = "Noahhermoso5";
 
-    $mail = new PHPMailer(true);
+    $claseMailer = class_exists('PHPMailer\\PHPMailer\\PHPMailer')
+        ? 'PHPMailer\\PHPMailer\\PHPMailer'
+        : 'PHPMailer';
+
+    $mail = new $claseMailer(true);
     $mail->CharSet = "UTF-8";
 
     try {
@@ -30,7 +32,7 @@ function EnviarCorreo($asunto, $contenido, $destinatario)
         $mail->addAddress($destinatario);
 
         return $mail->send();
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         return false;
     }
 }

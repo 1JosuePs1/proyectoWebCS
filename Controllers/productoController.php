@@ -2,6 +2,7 @@
 <?php
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/slugify.php";
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/productosModel.php";
+require_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/config/guardAdmin.php";
 
 function ObtenerProductoDetallePorNombreController($nombreProducto)
 {
@@ -37,6 +38,57 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    RequerirAdminOculto();
+
+    $accion = trim($_POST['accion'] ?? 'registrar');
+
+    if ($accion === 'editar') {
+        $idProducto = intval($_POST['idProducto'] ?? 0);
+        $idCategoria = trim($_POST['idCategoria'] ?? '');
+        $nombre = trim($_POST['nombreProducto'] ?? '');
+        $marca = trim($_POST['marcaProducto'] ?? '');
+        $descripcion = trim($_POST['descripcionProducto'] ?? '');
+        $precio = trim($_POST['precioProducto'] ?? '');
+        $stock = trim($_POST['stockProducto'] ?? '');
+
+        if ($idProducto <= 0 || empty($idCategoria) || empty($nombre) || empty($marca) || empty($precio) || $stock === "") {
+            $_SESSION['error_producto'] = "Completa los campos obligatorios para editar.";
+            header("Location: /proyectoWebCS/Views/Admin/editarProducto.php?id=" . $idProducto);
+            exit();
+        }
+
+        if (!is_numeric($precio) || floatval($precio) <= 0) {
+            $_SESSION['error_producto'] = "El precio debe ser mayor que 0.";
+            header("Location: /proyectoWebCS/Views/Admin/editarProducto.php?id=" . $idProducto);
+            exit();
+        }
+
+        if (!is_numeric($stock) || intval($stock) < 0) {
+            $_SESSION['error_producto'] = "El stock no puede ser negativo.";
+            header("Location: /proyectoWebCS/Views/Admin/editarProducto.php?id=" . $idProducto);
+            exit();
+        }
+
+        $okEdicion = editarProductoModel(
+            $idProducto,
+            intval($idCategoria),
+            $nombre,
+            $marca,
+            $descripcion,
+            floatval($precio),
+            intval($stock)
+        );
+
+        if (!$okEdicion) {
+            $_SESSION['error_producto'] = "No se pudo actualizar el producto. Verifica que exista el SP sp_EditarProductoAdmin.";
+            header("Location: /proyectoWebCS/Views/Admin/editarProducto.php?id=" . $idProducto);
+            exit();
+        }
+
+        $_SESSION['ok_producto'] = "Producto actualizado correctamente.";
+        header("Location: /proyectoWebCS/Views/Admin/listaProductos.php");
+        exit();
+    }
 
     $idCategoria = trim($_POST['idCategoria']);
     $nombre = trim($_POST['nombreProducto']);
@@ -90,7 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jsonImagenes = json_encode($imagenesGuardadas);
     actualizarImagenesProductoModel($idProducto, $jsonImagenes);
 
-    header("Location: ../Views/Admin/dashboard.php");
+    $_SESSION['ok_producto'] = "Producto registrado correctamente.";
+    header("Location: ../Views/Admin/listaProductos.php");
     exit();
 }
 

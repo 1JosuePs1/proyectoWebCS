@@ -103,6 +103,14 @@ unset($_SESSION['resumen_pago']);
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <?php if ($idPedido > 0): ?>
+                                <a href="/proyectoWebCS/Controllers/reciboController.php?accion=descargar&idPedido=<?= $idPedido ?>" class="btn btn-outline-dark">
+                                    <i class="bi bi-download me-1"></i>Descargar recibo
+                                </a>
+                                <a href="/proyectoWebCS/Controllers/reciboController.php?accion=enviarCorreo&idPedido=<?= $idPedido ?>" class="btn btn-outline-secondary">
+                                    <i class="bi bi-envelope me-1"></i>Enviar recibo al correo
+                                </a>
+                            <?php endif; ?>
                             <a href="/proyectoWebCS/Views/Home/Home.php" class="btn text-white" style="background-color: var(--primer-color);">
                                 <i class="bi bi-shop me-1"></i>Seguir comprando
                             </a>

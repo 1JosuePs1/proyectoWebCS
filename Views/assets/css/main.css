@@ -189,7 +189,6 @@ body::-webkit-scrollbar-track {
     border: 0;
     font-size: 100%;
     font: inherit;
-    vertical-align: baseline;
 }
 
 /* End reset */
@@ -255,6 +254,21 @@ nav{
 .backgroundPrincipal{
     background-color: var(--primer-color)!important;
     color: var(--background-color)!important;
+}
+
+.admin-page .navbar {
+    margin-bottom: 0 !important;
+}
+
+.admin-main {
+    padding-top: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .admin-main {
+        padding-top: 1rem;
+    }
 }
 
 

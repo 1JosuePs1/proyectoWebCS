@@ -49,7 +49,7 @@ foreach ($pedidos as $filaPedido) {
 </head>
 
 <body class="bg-light">
-    <?php require('../components/nav.php') ?>
+    <?php require('../components/navAdmin.php')?>
 
     <div class="container my-5">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">

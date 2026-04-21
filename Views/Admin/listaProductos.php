@@ -63,7 +63,7 @@ $listaProductos = ObtenerProductosController();
 
 <body class="bg-light">
 
-    <?php require('../components/nav.php') ?>
+    <?php require('../components/navAdmin.php')?>
 
     <div class="container my-4">
 

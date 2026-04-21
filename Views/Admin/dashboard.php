@@ -18,6 +18,8 @@ $detalleVentas = ObtenerDetalleVentasDashboardController();
 </head>
 <body class="bg-light">
 
+
+<?php require('../components/navAdmin.php')?>
 <div class="container mt-5">
     <h1 class="text-center mb-4">Dashboard de Ventas</h1>
 

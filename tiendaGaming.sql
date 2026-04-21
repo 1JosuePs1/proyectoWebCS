@@ -135,7 +135,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER',NULL,'Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,1,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','agotado');
+INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER',NULL,'Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,1,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','disponible');
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -260,6 +260,31 @@ BEGIN
     SELECT idUsuario, nombreCompleto, emailUsuario
     FROM usuario
     WHERE idUsuario = p_idUsuario;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_AjustarEstadoStock` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AjustarEstadoStock`(IN p_idProducto INT)
+BEGIN
+    -- Primero actualizamos el estado basado en la realidad del stock
+    UPDATE producto 
+    SET estadoProducto = CASE 
+        WHEN stockProducto > 0 THEN 'disponible' 
+        ELSE 'agotado' 
+    END
+    WHERE idProducto = p_idProducto;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -631,4 +656,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-21  9:53:12
+-- Dump completed on 2026-04-21 10:04:06

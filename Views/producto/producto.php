@@ -6,6 +6,10 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/categoriasC
 
 $listaProductos = ObtenerProductosController();
 $categorias = ObtenerCategoriasController();
+
+$stockProductoDetalle = intval($p['stockProducto'] ?? 0);
+$estadoProductoDetalle = strtolower(trim($p['estadoProducto'] ?? ''));
+$agotadoDetalle = $stockProductoDetalle <= 0 || $estadoProductoDetalle === 'agotado';
 ?>
 
 
@@ -58,10 +62,16 @@ $categorias = ObtenerCategoriasController();
                     <form action="/proyectoWebCS/Controllers/carritoController.php" method="POST">
                         <input type="hidden" name="accion" value="agregar">
                         <input type="hidden" name="idProducto" value="<?php echo $p['idProducto']; ?>">
-                        <button type="submit" class="btn-primary producto-boton">Añadir al carrito</button>
+                        <button type="submit" class="btn-primary producto-boton <?php echo $agotadoDetalle ? 'disabled' : ''; ?>" <?php echo $agotadoDetalle ? 'disabled' : ''; ?>>
+                            <?php echo $agotadoDetalle ? 'Producto agotado' : 'Añadir al carrito'; ?>
+                        </button>
                     </form>
                     <div class="producto-disponibilidad">
-                        <span class="badge bg-success">En stock: <?php echo number_format($p['stockProducto'], 0); ?></span>
+                        <?php if ($agotadoDetalle): ?>
+                            <span class="badge bg-secondary">Agotado</span>
+                        <?php else: ?>
+                            <span class="badge bg-success">En stock: <?php echo number_format($stockProductoDetalle, 0); ?></span>
+                        <?php endif; ?>
                     </div>
                     <div class="producto-descripcion">
                         <h4>Descripción</h4>

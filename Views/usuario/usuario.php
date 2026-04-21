@@ -89,6 +89,12 @@ $campos = [
                                     <i class="bi bi-save me-2"></i>Guardar cambios
                                 </button>
                             </div>
+
+                            <div class="d-grid mt-2">
+                                <a href="/proyectoWebCS/Views/usuario/pedidos.php" class="btn btn-outline-secondary">
+                                    <i class="bi bi-clock-history me-2"></i>Ver mis pedidos
+                                </a>
+                            </div>
                         </form>
                     </div>
                 </div>

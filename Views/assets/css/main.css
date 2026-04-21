@@ -29,7 +29,7 @@
 }
 .navbar.bg-red-custom .form-control {
     background: #fff;
-    color: #e53935;
+    color: #e53935 !important;
 }
 /* Sticky Footer */
 html, body {

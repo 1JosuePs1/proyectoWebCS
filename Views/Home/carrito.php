@@ -131,8 +131,8 @@ $totalItems = ObtenerTotalItemsCarrito();
                                 <span style="color: var(--primer-color);">₡<?= number_format($totalCarrito, 0, ',', '.') ?></span>
                             </div>
                             <div class="d-grid mt-4">
-                                <a href="/proyectoWebCS/Views/Home/pago.php" class="btn btn-lg text-white w-100" style="background-color: var(--primer-color);">
-                                    <i class="bi bi-bag-check me-2"></i>Proceder al pago
+                                <a href="/proyectoWebCS/Views/Home/checkout.php" class="btn btn-lg text-white w-100" style="background-color: var(--primer-color);">
+                                    <i class="bi bi-bag-check me-2"></i>Checkout
                                 </a>
                             </div>
                             <div class="text-center mt-3">

@@ -58,7 +58,7 @@ CREATE TABLE `detalleventa` (
   KEY `idProducto` (`idProducto`),
   CONSTRAINT `detalleventa_ibfk_1` FOREIGN KEY (`idVenta`) REFERENCES `venta` (`idVenta`),
   CONSTRAINT `detalleventa_ibfk_2` FOREIGN KEY (`idProducto`) REFERENCES `producto` (`idProducto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +67,43 @@ CREATE TABLE `detalleventa` (
 
 LOCK TABLES `detalleventa` WRITE;
 /*!40000 ALTER TABLE `detalleventa` DISABLE KEYS */;
+INSERT INTO `detalleventa` VALUES (1,1,1,2,30000.00);
 /*!40000 ALTER TABLE `detalleventa` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pedido`
+--
+
+DROP TABLE IF EXISTS `pedido`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pedido` (
+  `idPedido` int NOT NULL AUTO_INCREMENT,
+  `idVenta` int NOT NULL,
+  `idUsuario` int NOT NULL,
+  `nombreDestinatario` varchar(100) NOT NULL,
+  `telefonoEnvio` varchar(9) NOT NULL,
+  `direccionEnvio` varchar(350) NOT NULL,
+  `estadoPedido` enum('pendiente','completado') DEFAULT 'pendiente',
+  `fechaPedido` datetime DEFAULT CURRENT_TIMESTAMP,
+  `fechaCompletado` datetime DEFAULT NULL,
+  PRIMARY KEY (`idPedido`),
+  UNIQUE KEY `idVenta_UNIQUE` (`idVenta`),
+  KEY `idUsuario` (`idUsuario`),
+  CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`idVenta`) REFERENCES `venta` (`idVenta`),
+  CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pedido`
+--
+
+LOCK TABLES `pedido` WRITE;
+/*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
+INSERT INTO `pedido` VALUES (1,1,1,'Josue Rivera','8691-3451','Cartago, cartago, estadio fello meza','pendiente','2026-04-21 09:34:27',NULL);
+/*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -99,7 +135,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER',NULL,'Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,3,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','disponible');
+INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER',NULL,'Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,1,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','agotado');
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +182,7 @@ CREATE TABLE `usuario` (
   UNIQUE KEY `emailUsuario` (`emailUsuario`),
   KEY `idRol` (`idRol`),
   CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`idRol`) REFERENCES `rol` (`idRol`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +191,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,2,'Josue Rivera','psjosue1@gmail.com','$2y$10$p06Cqlbty4EX4lmgEYpUMOs1KU/av5n.2n3B8n./fQCFJqgJHCnia','2026-03-22','activo');
+INSERT INTO `usuario` VALUES (1,2,'Josue Rivera','psjosue1@gmail.com','$2y$10$p06Cqlbty4EX4lmgEYpUMOs1KU/av5n.2n3B8n./fQCFJqgJHCnia','2026-03-22','activo'),(2,2,'admin','admin@mypcgaming.com','$2y$10$2R2JL8KbPavqE1Tv6jE7vOPMNa0dFJ/v3MQ7lx46CMWm9BltjCAM6','2026-04-21','activo'),(3,1,'Administrador','admin@tienda.com','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','2026-04-21','activo');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -174,7 +210,7 @@ CREATE TABLE `venta` (
   PRIMARY KEY (`idVenta`),
   KEY `idUsuario` (`idUsuario`),
   CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,8 +219,13 @@ CREATE TABLE `venta` (
 
 LOCK TABLES `venta` WRITE;
 /*!40000 ALTER TABLE `venta` DISABLE KEYS */;
+INSERT INTO `venta` VALUES (1,1,60000.00,'2026-04-21');
 /*!40000 ALTER TABLE `venta` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping events for database 'tiendagaming'
+--
 
 --
 -- Dumping routines for database 'tiendagaming'
@@ -268,6 +309,144 @@ BEGIN
         JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
     FROM producto
     WHERE estadoProducto = 'disponible';
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosPorCategoria` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductosPorCategoria`(IN p_idCategoria INT)
+BEGIN
+    SELECT
+        idProducto,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
+    FROM producto
+    WHERE estadoProducto = 'disponible'
+      AND idCategoria = p_idCategoria;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_MarcarPedidoCompletado` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_MarcarPedidoCompletado`(IN p_idPedido INT)
+BEGIN
+    UPDATE pedido
+    SET estadoPedido = 'completado',
+        fechaCompletado = NOW()
+    WHERE idPedido = p_idPedido
+      AND estadoPedido = 'pendiente';
+
+    SELECT ROW_COUNT() AS filasAfectadas;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ObtenerPedidosAdmin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ObtenerPedidosAdmin`()
+BEGIN
+    SELECT
+        pe.idPedido,
+        pe.idVenta,
+        pe.idUsuario,
+        u.nombreCompleto,
+        pe.nombreDestinatario,
+        pe.telefonoEnvio,
+        pe.direccionEnvio,
+        pe.estadoPedido,
+        pe.fechaPedido,
+        pe.fechaCompletado,
+        v.totalVenta,
+        dv.idDetalle,
+        dv.idProducto,
+        dv.cantidadProductos,
+        dv.precioUnitarioHistorico,
+        pr.nombreProducto
+    FROM pedido pe
+    INNER JOIN venta v ON pe.idVenta = v.idVenta
+    INNER JOIN usuario u ON pe.idUsuario = u.idUsuario
+    INNER JOIN detalleventa dv ON v.idVenta = dv.idVenta
+    INNER JOIN producto pr ON dv.idProducto = pr.idProducto
+    ORDER BY pe.idPedido DESC, dv.idDetalle ASC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ObtenerPedidosUsuario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ObtenerPedidosUsuario`(IN p_idUsuario INT)
+BEGIN
+    SELECT
+        pe.idPedido,
+        pe.idVenta,
+        pe.idUsuario,
+        u.nombreCompleto,
+        pe.nombreDestinatario,
+        pe.telefonoEnvio,
+        pe.direccionEnvio,
+        pe.estadoPedido,
+        pe.fechaPedido,
+        pe.fechaCompletado,
+        v.totalVenta,
+        dv.idDetalle,
+        dv.idProducto,
+        dv.cantidadProductos,
+        dv.precioUnitarioHistorico,
+        pr.nombreProducto
+    FROM pedido pe
+    INNER JOIN venta v ON pe.idVenta = v.idVenta
+    INNER JOIN usuario u ON pe.idUsuario = u.idUsuario
+    INNER JOIN detalleventa dv ON v.idVenta = dv.idVenta
+    INNER JOIN producto pr ON dv.idProducto = pr.idProducto
+    WHERE pe.idUsuario = p_idUsuario
+    ORDER BY pe.idPedido DESC, dv.idDetalle ASC;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -452,26 +631,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
-/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosPorCategoria` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductosPorCategoria`(IN p_idCategoria INT)
-BEGIN
-    SELECT
-        idProducto,
-        nombreProducto,
-        marca,
-        descripcionProducto,
-        precioProducto,
-        stockProducto,
-        estadoProducto,
-        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
-    FROM producto
-    WHERE estadoProducto = 'disponible'
-      AND idCategoria = p_idCategoria;
-END ;;
-DELIMITER ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-
--- Dump completed on 2026-03-25  0:37:04
+-- Dump completed on 2026-04-21  9:53:12

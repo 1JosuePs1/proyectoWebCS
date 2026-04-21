@@ -9,9 +9,14 @@ if (!$resumenPago) {
 }
 
 $idVenta = intval($resumenPago['idVenta'] ?? 0);
+$idPedido = intval($resumenPago['idPedido'] ?? 0);
 $totalPago = floatval($resumenPago['total'] ?? 0);
 $tarjetaPago = $resumenPago['tarjeta'] ?? '****';
 $titularPago = $resumenPago['titular'] ?? '';
+$estadoPedido = $resumenPago['estadoPedido'] ?? 'pendiente';
+$nombreDestinatario = $resumenPago['nombreDestinatario'] ?? '';
+$telefonoEnvio = $resumenPago['telefonoEnvio'] ?? '';
+$direccionEnvio = $resumenPago['direccionEnvio'] ?? '';
 $fechaPagoRaw = $resumenPago['fecha'] ?? '';
 
 $fechaPago = $fechaPagoRaw;
@@ -53,13 +58,23 @@ unset($_SESSION['resumen_pago']);
                                 <i class="bi bi-check2-circle fs-1"></i>
                             </div>
                             <h3 class="mb-2">Pago realizado con exito</h3>
-                            <p class="text-muted mb-0">Tu pedido ya fue confirmado y el inventario se actualizo correctamente.</p>
+                            <p class="text-muted mb-0">Tu pedido quedo registrado y esta en estado pendiente de envio.</p>
                         </div>
 
                         <div class="border rounded-3 p-3 p-md-4 mb-4">
                             <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Numero de pedido</span>
+                                <span class="fw-semibold">#<?= $idPedido ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Numero de venta</span>
                                 <span class="fw-semibold">#<?= $idVenta ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Estado del pedido</span>
+                                <span class="badge rounded-pill <?= $estadoPedido === 'completado' ? 'text-bg-success' : 'text-bg-warning' ?>">
+                                    <?= htmlspecialchars(ucfirst($estadoPedido)) ?>
+                                </span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Total pagado</span>
@@ -77,11 +92,21 @@ unset($_SESSION['resumen_pago']);
                                 <span class="text-muted">Fecha</span>
                                 <span><?= htmlspecialchars($fechaPago) ?></span>
                             </div>
+                            <hr>
+                            <div>
+                                <p class="text-muted mb-1">Envio a:</p>
+                                <p class="mb-1 fw-semibold"><?= htmlspecialchars($nombreDestinatario) ?></p>
+                                <p class="mb-1"><?= htmlspecialchars($telefonoEnvio) ?></p>
+                                <p class="mb-0"><?= nl2br(htmlspecialchars($direccionEnvio)) ?></p>
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center">
                             <a href="/proyectoWebCS/Views/Home/Home.php" class="btn text-white" style="background-color: var(--primer-color);">
                                 <i class="bi bi-shop me-1"></i>Seguir comprando
+                            </a>
+                            <a href="/proyectoWebCS/Views/usuario/pedidos.php" class="btn btn-outline-primary">
+                                <i class="bi bi-clock-history me-1"></i>Ver mis pedidos
                             </a>
                             <a href="/proyectoWebCS/Views/Home/carrito.php" class="btn btn-outline-secondary">
                                 <i class="bi bi-cart3 me-1"></i>Ir al carrito

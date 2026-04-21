@@ -1,4 +1,5 @@
 <?php include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Controllers/carritoController.php"; ?>
+<?php $esAdmin = intval($_SESSION['idRol'] ?? 0) === 1; ?>
     <!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-red-custom">
         <div class="container-fluid">
@@ -17,6 +18,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Ofertas</a>
                     </li>
+                    <?php if (isset($_SESSION['idUsuario'])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/proyectoWebCS/Views/usuario/pedidos.php">Mis pedidos</a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($esAdmin): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/proyectoWebCS/Views/Admin/pedidos.php">Pedidos admin</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 
                 <ul class="navbar-nav ms-auto align-items-center gap-2">

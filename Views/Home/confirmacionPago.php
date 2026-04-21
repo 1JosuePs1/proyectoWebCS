@@ -47,6 +47,7 @@ unset($_SESSION['resumen_pago']);
 
 <body class="bg-light">
     <?php require('../components/nav.php') ?>
+    
 
     <div class="container my-5">
         <div class="row justify-content-center">

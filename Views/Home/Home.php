@@ -71,8 +71,11 @@ $iconosPorCategoria = [
 
 <body>
     <!-- Navbar componente-->
-    <?php require('../components/nav.php')?>
-
+    
+    <?php 
+    // 2. Ahora sí, la variable ya tiene valor gracias al require de arriba
+    require_once $rutaNavbar; 
+    ?>
 
     
     <div id="registroCarousel" class="carousel slide mb-4" data-bs-ride="carousel">

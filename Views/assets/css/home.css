@@ -72,6 +72,15 @@
     transform: scale(1.05);
 }
 
+.category-item.active .category-img {
+    box-shadow: 0 0 0 3px #fff, 0 0 0 5px #e42327;
+}
+
+.category-item.active .category-name {
+    color: #e42327;
+    font-weight: 700;
+}
+
 .category-name {
     margin: 0;
     font-size: 14px;

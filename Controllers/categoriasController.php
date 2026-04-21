@@ -8,4 +8,8 @@ function ObtenerCategoriasController() {
 function ObtenerProductosController() {
     return ObtenerProductosModel();
 }
+
+function ObtenerProductosPorCategoriaController($idCategoria) {
+    return ObtenerProductosPorCategoriaModel($idCategoria);
+}
 ?>

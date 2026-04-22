@@ -19,6 +19,8 @@ function EnviarCorreo($asunto, $contenido, $destinatario)
     try {
         $mail->isSMTP();
         $mail->isHTML(true);
+        $mail->Timeout = 6;
+        $mail->Timelimit = 6;
         $mail->Host = "smtp.office365.com";
         $mail->SMTPSecure = "tls";
         $mail->Port = 587;

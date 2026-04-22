@@ -35,7 +35,7 @@
                 </ul>
                 
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <form class="d-flex" role="search" method="GET" action="/proyectoWebCS/Views/Home/productos.php">
+                    <form class="d-flex nav-search-form" role="search" method="GET" action="/proyectoWebCS/Views/Home/productos.php">
                         <input class="form-control me-2" type="search" name="q" placeholder="Buscar" aria-label="Buscar" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                         <button class="btn btn-outline-light" type="submit">Buscar</button>
                     </form>
@@ -55,14 +55,21 @@
                             <a class="btn btn-user" href="/proyectoWebCS/Views/usuario/usuario.php" title="Perfil de <?= htmlspecialchars($_SESSION['nombreCompleto']) ?>">
                                 <i class="bi bi-person-circle"></i>
                                 <span class="d-none d-lg-inline ms-1 small nombreUsuario"><?= htmlspecialchars($_SESSION['nombreCompleto']) ?></span>
+                                <span class="d-none mobile-nav-label">Perfil</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-logout" href="/proyectoWebCS/Controllers/logout.php" title="Cerrar sesión"><i class="bi bi-box-arrow-right"></i></a>
+                            <a class="btn btn-logout" href="/proyectoWebCS/Controllers/logout.php" title="Cerrar sesión">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span class="d-none mobile-nav-label">Salir</span>
+                            </a>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="btn btn-user" href="/proyectoWebCS/index.php" title="Iniciar sesión"><i class="bi bi-person-circle"></i></a>
+                            <a class="btn btn-user" href="/proyectoWebCS/index.php" title="Iniciar sesión">
+                                <i class="bi bi-person-circle"></i>
+                                <span class="d-none mobile-nav-label">Iniciar sesión</span>
+                            </a>
                         </li>
                     <?php endif; ?>
                 </ul>

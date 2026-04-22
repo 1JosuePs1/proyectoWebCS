@@ -1,6 +1,19 @@
 <?php
 include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/UtilitarioModel.php";
 
+function ObtenerPrecioEfectivoVenta($producto)
+{
+    $precioNormal = floatval($producto['precioProducto'] ?? 0);
+    $enOferta = intval($producto['enOferta'] ?? 0) === 1;
+    $precioOferta = isset($producto['precioOferta']) ? floatval($producto['precioOferta']) : 0;
+
+    if ($enOferta && $precioOferta > 0 && $precioOferta < $precioNormal) {
+        return $precioOferta;
+    }
+
+    return $precioNormal;
+}
+
 function RegistrarCompraCarritoModel($idUsuario, $items, $datosEnvio = [])
 {
     $conexion = OpenDatabase();
@@ -30,7 +43,7 @@ function RegistrarCompraCarritoModel($idUsuario, $items, $datosEnvio = [])
     }
 
     try {
-        $consultaProducto = $conexion->prepare("SELECT idProducto, nombreProducto, precioProducto, stockProducto, estadoProducto FROM producto WHERE idProducto = ? FOR UPDATE");
+        $consultaProducto = $conexion->prepare("SELECT idProducto, nombreProducto, precioProducto, enOferta, precioOferta, stockProducto, estadoProducto FROM producto WHERE idProducto = ? FOR UPDATE");
         $consultaInsertVenta = $conexion->prepare("INSERT INTO venta (idUsuario, totalVenta, fechaVenta) VALUES (?, ?, CURDATE())");
         $consultaInsertDetalle = $conexion->prepare("INSERT INTO detalleventa (idVenta, idProducto, cantidadProductos, precioUnitarioHistorico) VALUES (?, ?, ?, ?)");
         $consultaActualizarStock = $conexion->prepare("UPDATE producto SET stockProducto = stockProducto - ?, estadoProducto = IF(stockProducto - ? <= 0, 'agotado', 'disponible') WHERE idProducto = ?");
@@ -65,7 +78,7 @@ function RegistrarCompraCarritoModel($idUsuario, $items, $datosEnvio = [])
                 throw new Exception("Stock insuficiente para " . $producto['nombreProducto'] . ".");
             }
 
-            $precioUnitario = floatval($producto['precioProducto']);
+            $precioUnitario = ObtenerPrecioEfectivoVenta($producto);
             $totalVenta += $precioUnitario * $cantidad;
 
             $detalleVenta[] = [

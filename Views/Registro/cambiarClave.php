@@ -1,4 +1,13 @@
-<?php session_start(); ?>
+<?php
+session_start();
+$correoRecuperacion = trim($_GET['correo'] ?? '');
+
+if ($correoRecuperacion === '') {
+    $_SESSION['error_recuperar'] = "Primero solicita el enlace de recuperacion";
+    header("Location: ../../Views/Registro/recuperarClave.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -30,8 +39,10 @@
 
                     <div class="card-body p-4">
                         <form action="../../Controllers/recuperarController.php" method="POST" id="formRecuperar" novalidate>
+                            <input type="hidden" name="accion" value="cambiar">
+
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="correoUsuario" name="correoUsuario" placeholder="Correo electrónico">
+                                <input type="email" class="form-control" id="correoUsuario" name="correoUsuario" value="<?= htmlspecialchars($correoRecuperacion) ?>" placeholder="Correo electrónico" readonly>
                                 <label for="correoUsuario">Correo electrónico</label>
                                 <small id="errorCorreo" class="text-danger"></small>
                             </div>
@@ -56,7 +67,7 @@
 
                     <div class="text-center py-3">
                         <small class="text-muted textLink">
-                            <a href="../../Views/Registro/login.php" class="text-primary">Volver a Iniciar Sesión</a>
+                            <a href="../../Views/Registro/recuperarClave.php" class="text-primary">Volver a Recuperar</a>
                         </small>
                     </div>
                 </div>

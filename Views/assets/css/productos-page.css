@@ -1,0 +1,138 @@
+.filtros-sidebar {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.filtro-titulo {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filtro-titulo i {
+    color: #e53935;
+}
+
+.filtro-opcion {
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.filtro-opcion:last-child {
+    border-bottom: none;
+}
+
+.filtro-opcion label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filtro-opcion .form-check-input {
+    accent-color: #e53935;
+    border-color: #e53935;
+}
+
+.filtro-opcion .form-check-input:checked {
+    background-color: #e53935;
+    border-color: #e53935;
+}
+
+.filtro-opcion .form-check-input:focus {
+    border-color: #e53935;
+    box-shadow: 0 0 0 0.2rem rgba(229, 57, 53, 0.25);
+}
+
+.rango-precio {
+    margin: 15px 0;
+}
+
+.rango-precio input {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.badge-filtro {
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+}
+
+.titulo-catalogo {
+    border-bottom: 3px solid #e53935;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.sin-resultados {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.sin-resultados i.bi-inbox {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.sin-resultados .btn-color {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    white-space: nowrap;
+}
+
+.sin-resultados .btn-color i {
+    font-size: 1.2rem;
+}
+
+.controles-catalogo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.controles-catalogo .form-select {
+    border-color: #ddd !important;
+    color: #333;
+    background-color: #fff;
+}
+
+.controles-catalogo .form-select:focus {
+    border-color: #e53935 !important;
+    box-shadow: 0 0 0 0.2rem rgba(229, 57, 53, 0.25) !important;
+}
+
+@media (max-width: 768px) {
+    .filtros-sidebar {
+        position: relative;
+        top: auto;
+        margin-bottom: 30px;
+    }
+
+    .controles-catalogo {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .controles-catalogo select {
+        width: 100%;
+    }
+}

@@ -21,27 +21,76 @@ if ($mostrarOfertas) {
 }
 
 if ($busqueda !== '') {
-    $aMinusculas = function ($texto) {
-        return function_exists('mb_strtolower')
+    $normalizarTexto = function ($texto) {
+        $texto = trim((string) $texto);
+        $texto = function_exists('mb_strtolower')
             ? mb_strtolower($texto, 'UTF-8')
             : strtolower($texto);
+
+        if (function_exists('iconv')) {
+            $sinAcentos = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $texto);
+            if ($sinAcentos !== false) {
+                $texto = $sinAcentos;
+            }
+        }
+
+        return preg_replace('/\s+/', ' ', $texto);
     };
 
-    $termino = $aMinusculas($busqueda);
-    $listaProductos = array_values(array_filter($listaProductos, function ($p) use ($termino) {
-        $aMinusculasLocal = function ($texto) {
-            return function_exists('mb_strtolower')
-                ? mb_strtolower($texto, 'UTF-8')
-                : strtolower($texto);
-        };
+    $termino = $normalizarTexto($busqueda);
 
-        $nombre = $aMinusculasLocal($p['nombreProducto'] ?? '');
-        $marca = $aMinusculasLocal($p['marca'] ?? '');
-        $descripcion = $aMinusculasLocal($p['descripcionProducto'] ?? '');
-        return str_contains($nombre, $termino)
-            || str_contains($marca, $termino)
-            || str_contains($descripcion, $termino);
+    $obtenerPuntajeBusqueda = function ($producto) use ($termino, $normalizarTexto) {
+        $nombre = $normalizarTexto($producto['nombreProducto'] ?? '');
+        $marca = $normalizarTexto($producto['marca'] ?? '');
+        $descripcion = $normalizarTexto($producto['descripcionProducto'] ?? '');
+
+        $puntaje = 0;
+
+        if ($nombre === $termino) {
+            $puntaje += 1000;
+        } elseif (str_starts_with($nombre, $termino)) {
+            $puntaje += 700;
+        } elseif (str_contains($nombre, $termino)) {
+            $puntaje += 500;
+        }
+
+        if ($marca === $termino) {
+            $puntaje += 400;
+        } elseif (str_starts_with($marca, $termino)) {
+            $puntaje += 250;
+        } elseif (str_contains($marca, $termino)) {
+            $puntaje += 180;
+        }
+
+        if (str_contains($descripcion, $termino)) {
+            $puntaje += 80;
+        }
+
+        if ($puntaje > 0) {
+            $stock = intval($producto['stockProducto'] ?? 0);
+            $estado = strtolower(trim((string) ($producto['estadoProducto'] ?? '')));
+            if ($stock > 0 && $estado !== 'agotado') {
+                $puntaje += 20;
+            }
+        }
+
+        return $puntaje;
+    };
+
+    $listaProductos = array_values(array_filter($listaProductos, function ($p) use ($obtenerPuntajeBusqueda) {
+        return $obtenerPuntajeBusqueda($p) > 0;
     }));
+
+    usort($listaProductos, function ($a, $b) use ($obtenerPuntajeBusqueda) {
+        $puntajeA = $obtenerPuntajeBusqueda($a);
+        $puntajeB = $obtenerPuntajeBusqueda($b);
+
+        if ($puntajeA === $puntajeB) {
+            return 0;
+        }
+
+        return ($puntajeA > $puntajeB) ? -1 : 1;
+    });
 }
 
 // Obtener nombre de categoría actual
@@ -98,148 +147,10 @@ $iconosPorCategoria = [
     <!-- CSS -->
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/home.css">
-    
-    <style>
-        .filtros-sidebar {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }
-
-        .filtro-titulo {
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            color: #333;
-            display: flex;
-            align-items-center;
-            gap: 8px;
-        }
-
-        .filtro-titulo i {
-            color: #e53935;
-        }
-
-        .filtro-opcion {
-            padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .filtro-opcion:last-child {
-            border-bottom: none;
-        }
-
-        .filtro-opcion label {
-            margin: 0;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .filtro-opcion .form-check-input {
-            accent-color: #e53935;
-            border-color: #e53935;
-        }
-
-        .filtro-opcion .form-check-input:checked {
-            background-color: #e53935;
-            border-color: #e53935;
-        }
-
-        .filtro-opcion .form-check-input:focus {
-            border-color: #e53935;
-            box-shadow: 0 0 0 0.2rem rgba(229, 57, 53, 0.25);
-        }
-
-        .rango-precio {
-            margin: 15px 0;
-        }
-
-        .rango-precio input {
-            width: 100%;
-            margin: 5px 0;
-        }
-
-        .badge-filtro {
-            display: inline-block;
-            margin: 5px 5px 5px 0;
-        }
-
-        .titulo-catalogo {
-            border-bottom: 3px solid #e53935;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-
-        .sin-resultados {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .sin-resultados i.bi-inbox {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .sin-resultados .btn-color {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 20px;
-            white-space: nowrap;
-        }
-
-        .sin-resultados .btn-color i {
-            font-size: 1.2rem;
-        }
-
-        .controles-catalogo {
-            display: flex;
-            justify-content: space-between;
-            align-items-center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .controles-catalogo .form-select {
-            border-color: #ddd !important;
-            color: #333;
-            background-color: #fff;
-        }
-
-        .controles-catalogo .form-select:focus {
-            border-color: #e53935 !important;
-            box-shadow: 0 0 0 0.2rem rgba(229, 57, 53, 0.25) !important;
-        }
-        @media (max-width: 768px) {
-            .filtros-sidebar {
-                position: relative;
-                top: auto;
-                margin-bottom: 30px;
-            }
-
-            .controles-catalogo {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .controles-catalogo select {
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/productos-page.css">
 </head>
 
-<body>
+<body data-busqueda-actual="<?= htmlspecialchars($busqueda, ENT_QUOTES, 'UTF-8') ?>">
     <!-- Navbar componente-->
     <?php 
     require_once $rutaNavbar;
@@ -366,8 +277,13 @@ $iconosPorCategoria = [
                 <?php else: ?>
                     <div class="sin-resultados">
                         <i class="bi bi-inbox"></i>
-                        <h4>No hay productos que coincidan con los filtros</h4>
-                        <p class="mb-3">Intenta ajustar los filtros o explorar otras categorías</p>
+                        <?php if ($busqueda !== ''): ?>
+                            <h4>No hay coincidencias para "<?= htmlspecialchars($busqueda) ?>"</h4>
+                            <p class="mb-3">Prueba con otro nombre o marca.</p>
+                        <?php else: ?>
+                            <h4>No hay productos que coincidan con los filtros</h4>
+                            <p class="mb-3">Intenta ajustar los filtros o explorar otras categorías</p>
+                        <?php endif; ?>
                         <a href="/proyectoWebCS/Views/Home/productos.php" class="btn btn-color btn-sm">
                             <i class="bi bi-arrow-left me-1"></i> Ver todos los productos
                         </a>
@@ -381,42 +297,6 @@ $iconosPorCategoria = [
     <?php require('../components/footer.php') ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script>
-        function aplicarFiltros() {
-            const params = new URLSearchParams();
-            const busquedaActual = <?= json_encode($busqueda, JSON_UNESCAPED_UNICODE) ?>;
-
-            if (busquedaActual && busquedaActual.trim() !== '') {
-                params.set('q', busquedaActual);
-            }
-
-            // Categoría
-            const categoriasSeleccionadas = document.querySelectorAll('.filtro-categoria:checked');
-            if (categoriasSeleccionadas.length > 0 && categoriasSeleccionadas[0].value) {
-                params.append('categoria', categoriasSeleccionadas[0].value);
-            }
-
-            // Precio
-            const precioMin = document.getElementById('precioMin').value;
-            const precioMax = document.getElementById('precioMax').value;
-            if (precioMin) params.append('precio_min', precioMin);
-            if (precioMax) params.append('precio_max', precioMax);
-
-            // Ofertas
-            if (document.getElementById('soloOfertas').checked) {
-                params.append('ofertas', '1');
-            }
-
-            // Ordenar
-            const ordenar = document.getElementById('ordenar').value;
-            if (ordenar && ordenar !== 'disponibilidad') {
-                params.append('ordenar', ordenar);
-            }
-
-            // Redirigir con parámetros
-            const url = '/proyectoWebCS/Views/Home/productos.php?' + params.toString();
-            window.location.href = url;
-        }
-    </script>
+    <script src="/proyectoWebCS/Views/assets/js/productos-page.js"></script>
 </body>
 </html>

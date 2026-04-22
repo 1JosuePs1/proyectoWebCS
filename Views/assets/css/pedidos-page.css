@@ -1,0 +1,51 @@
+.pedido-thumb {
+    width: 62px;
+    height: 62px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #f8f9fa;
+    padding: 4px;
+}
+
+.pedido-direccion {
+    min-width: 250px;
+    white-space: normal;
+    line-height: 1.35;
+}
+
+.pedido-direccion-linea {
+    word-break: break-word;
+}
+
+.pedido-recibo,
+.pedido-accion {
+    min-width: 145px;
+}
+
+.pedido-recibo-acciones,
+.pedido-accion-contenido {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: stretch;
+    width: max-content;
+    margin: 1px auto;
+}
+
+.pedido-recibo .btn,
+.pedido-accion .btn {
+    white-space: nowrap;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.82rem;
+    line-height: 1.2;
+}
+
+@media (max-width: 991px) {
+    .pedido-direccion {
+        min-width: 220px;
+    }
+
+    .pedido-recibo,
+    .pedido-accion {
+        min-width: 130px;
+    }
+}

@@ -3,7 +3,7 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Models/slugify.php";
 function ObtenerProductoPorNombreModel($slugNombre)
 {
     $conexion = OpenDatabase();
-    $consultaSQL = "SELECT * FROM producto";
+    $consultaSQL = "CALL sp_ConsultarProductosConOferta()";
     $resultado = $conexion->query($consultaSQL);
     $producto = null;
     while ($row = $resultado->fetch_assoc()) {
@@ -13,6 +13,7 @@ function ObtenerProductoPorNombreModel($slugNombre)
         }
     }
     $resultado->free();
+    $conexion->next_result();
     CloseDatabase($conexion);
     return $producto;
 }
@@ -66,12 +67,18 @@ function actualizarImagenesProductoModel($idProducto, $imagenJson)
 {
     $conexion = OpenDatabase();
 
-    $consultaSQL = "UPDATE producto SET imagenProducto = ? WHERE idProducto = ?";
+    $consultaSQL = "CALL sp_ActualizarImagenesProducto(?, ?)";
     $consultaPreparada = $conexion->prepare($consultaSQL);
-    $consultaPreparada->bind_param("si", $imagenJson, $idProducto);
+    $consultaPreparada->bind_param("is", $idProducto, $imagenJson);
     $result = $consultaPreparada->execute();
 
     $consultaPreparada->close();
+    while ($conexion->next_result()) {
+        $extra = $conexion->store_result();
+        if ($extra) {
+            $extra->free();
+        }
+    }
     CloseDatabase($conexion);
     return $result;
 }
@@ -80,7 +87,7 @@ function ObtenerProductosModel()
 {
     $conexion = OpenDatabase();
 
-    $resultadoProductos = $conexion->query("CALL sp_ConsultarProductos()");
+    $resultadoProductos = $conexion->query("CALL sp_ConsultarProductosConOferta()");
     $listaProductos = [];
 
     while ($producto = $resultadoProductos->fetch_assoc()) {
@@ -90,6 +97,7 @@ function ObtenerProductosModel()
     $resultadoProductos->free();
     $conexion->next_result();
     CloseDatabase($conexion);
+
     return OrdenarProductosPorDisponibilidadModel($listaProductos);
 }
 
@@ -151,7 +159,7 @@ function ObtenerProductoPorIdModel($idProducto)
 function ObtenerProductosPorCategoriaModel($idCategoria)
 {
     $conexion = OpenDatabase();
-    $consultaSQL = "CALL sp_ConsultarProductosPorCategoria(?)";
+    $consultaSQL = "CALL sp_ConsultarProductosPorCategoriaConOferta(?)";
     $consultaPreparada = $conexion->prepare($consultaSQL);
     $consultaPreparada->bind_param("i", $idCategoria);
     $consultaPreparada->execute();
@@ -162,6 +170,7 @@ function ObtenerProductosPorCategoriaModel($idCategoria)
     }
     $resultado->free();
     $consultaPreparada->close();
+    $conexion->next_result();
     CloseDatabase($conexion);
     return OrdenarProductosPorDisponibilidadModel($listaProductos);
 }
@@ -169,20 +178,7 @@ function ObtenerProductosPorCategoriaModel($idCategoria)
 function ObtenerProductosEnOfertaModel()
 {
     $conexion = OpenDatabase();
-    $consultaSQL = "SELECT 
-        idProducto,
-        idCategoria,
-        nombreProducto,
-        marca,
-        descripcionProducto,
-        precioProducto,
-        stockProducto,
-        estadoProducto,
-        enOferta,
-        precioOferta,
-        imagenProducto,
-        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '\$[0]')) AS primeraImagen
-    FROM producto WHERE enOferta = 1 AND estadoProducto = 'disponible' ORDER BY precioProducto DESC";
+    $consultaSQL = "CALL sp_ConsultarProductosOfertaActiva()";
     $resultado = $conexion->query($consultaSQL);
     $listaProductos = [];
     
@@ -191,6 +187,7 @@ function ObtenerProductosEnOfertaModel()
     }
     
     $resultado->free();
+    $conexion->next_result();
     CloseDatabase($conexion);
     return $listaProductos;
 }
@@ -198,58 +195,17 @@ function ObtenerProductosEnOfertaModel()
 function FiltrarProductosModel($idCategoria = null, $precioMin = null, $precioMax = null, $ordenar = 'disponibilidad')
 {
     $conexion = OpenDatabase();
-    
-    $sql = "SELECT 
-        idProducto,
-        idCategoria,
-        nombreProducto,
-        marca,
-        descripcionProducto,
-        precioProducto,
-        stockProducto,
-        estadoProducto,
-        enOferta,
-        precioOferta,
-        imagenProducto,
-        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '\$[0]')) AS primeraImagen
-    FROM producto WHERE 1=1";
-    
-    if ($idCategoria !== null && $idCategoria > 0) {
-        $idCategoria = intval($idCategoria);
-        $sql .= " AND idCategoria = $idCategoria";
-    }
-    
-    if ($precioMin !== null) {
-        $precioMin = floatval($precioMin);
-        $sql .= " AND precioProducto >= $precioMin";
-    }
-    
-    if ($precioMax !== null) {
-        $precioMax = floatval($precioMax);
-        $sql .= " AND precioProducto <= $precioMax";
-    }
-    
-    // Ordenar según parámetro
-    switch ($ordenar) {
-        case 'precio_menor':
-            $sql .= " ORDER BY precioProducto ASC";
-            break;
-        case 'precio_mayor':
-            $sql .= " ORDER BY precioProducto DESC";
-            break;
-        case 'nombre':
-            $sql .= " ORDER BY nombreProducto ASC";
-            break;
-        case 'relevancia':
-            $sql .= " ORDER BY enOferta DESC, stockProducto DESC";
-            break;
-        case 'disponibilidad':
-        default:
-            $sql .= " ORDER BY CASE WHEN estadoProducto = 'disponible' THEN 0 ELSE 1 END, precioProducto DESC";
-            break;
-    }
-    
-    $resultado = $conexion->query($sql);
+
+    $consultaSQL = "CALL sp_FiltrarProductosConOferta(?, ?, ?, ?)";
+    $consultaPreparada = $conexion->prepare($consultaSQL);
+    $categoriaParam = ($idCategoria !== null && $idCategoria > 0) ? intval($idCategoria) : null;
+    $precioMinParam = ($precioMin !== null) ? floatval($precioMin) : null;
+    $precioMaxParam = ($precioMax !== null) ? floatval($precioMax) : null;
+    $ordenarParam = trim((string) $ordenar);
+
+    $consultaPreparada->bind_param("idds", $categoriaParam, $precioMinParam, $precioMaxParam, $ordenarParam);
+    $consultaPreparada->execute();
+    $resultado = $consultaPreparada->get_result();
     $listaProductos = [];
     
     while ($producto = $resultado->fetch_assoc()) {
@@ -257,6 +213,8 @@ function FiltrarProductosModel($idCategoria = null, $precioMin = null, $precioMa
     }
     
     $resultado->free();
+    $consultaPreparada->close();
+    $conexion->next_result();
     CloseDatabase($conexion);
     return $listaProductos;
 }
@@ -268,7 +226,7 @@ function ActualizarOfertaProductoModel($idProducto, $enOferta, $precioOferta = n
     $enOferta = $enOferta ? 1 : 0;
     $precioOferta = ($enOferta && $precioOferta !== null) ? floatval($precioOferta) : null;
     
-    $sql = "UPDATE producto SET enOferta = ?, precioOferta = ? WHERE idProducto = ?";
+    $sql = "CALL sp_ActualizarOfertaProducto(?, ?, ?)";
     $consultaPreparada = $conexion->prepare($sql);
     
     if (!$consultaPreparada) {
@@ -276,10 +234,16 @@ function ActualizarOfertaProductoModel($idProducto, $enOferta, $precioOferta = n
         return false;
     }
     
-    $consultaPreparada->bind_param("idi", $enOferta, $precioOferta, $idProducto);
+    $consultaPreparada->bind_param("iid", $idProducto, $enOferta, $precioOferta);
     $result = $consultaPreparada->execute();
     
     $consultaPreparada->close();
+    while ($conexion->next_result()) {
+        $extra = $conexion->store_result();
+        if ($extra) {
+            $extra->free();
+        }
+    }
     CloseDatabase($conexion);
     
     return $result;

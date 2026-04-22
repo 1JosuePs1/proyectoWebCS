@@ -5,36 +5,75 @@ function VerificarCorreoUsuarioModel($correo)
 {
     $conexion = OpenDatabase();
 
-    $consultaSQL = "CALL sp_VerificarCorreoUsuario(?)";
-    $consultaPreparada = $conexion->prepare($consultaSQL);
-    $consultaPreparada->bind_param("s", $correo);
-    $consultaPreparada->execute();
+    try {
+        $consultaSQL = "CALL sp_VerificarCorreoUsuario(?)";
+        $consultaPreparada = $conexion->prepare($consultaSQL);
+        $consultaPreparada->bind_param("s", $correo);
+        $consultaPreparada->execute();
 
-    $resultado = $consultaPreparada->get_result();
-    $usuario = $resultado->fetch_assoc();
+        $resultado = $consultaPreparada->get_result();
+        $usuario = $resultado->fetch_assoc();
 
-    $resultado->free();
-    $consultaPreparada->close();
-    $conexion->next_result();
-    CloseDatabase($conexion);
+        $resultado->free();
+        $consultaPreparada->close();
+        $conexion->next_result();
+        CloseDatabase($conexion);
 
-    return $usuario;
+        return $usuario;
+    } catch (mysqli_sql_exception $e) {
+        if (stripos($e->getMessage(), 'sp_VerificarCorreoUsuario') === false || stripos($e->getMessage(), 'does not exist') === false) {
+            CloseDatabase($conexion);
+            throw $e;
+        }
+
+        $consultaSQL = "SELECT idUsuario, nombreCompleto, emailUsuario FROM usuario WHERE emailUsuario = ? LIMIT 1";
+        $consultaPreparada = $conexion->prepare($consultaSQL);
+        $consultaPreparada->bind_param("s", $correo);
+        $consultaPreparada->execute();
+
+        $resultado = $consultaPreparada->get_result();
+        $usuario = $resultado->fetch_assoc();
+
+        $resultado->free();
+        $consultaPreparada->close();
+        CloseDatabase($conexion);
+
+        return $usuario;
+    }
 }
 
 function ActualizarPasswordUsuarioModel($correo, $passwordHash)
 {
     $conexion = OpenDatabase();
 
-    $consultaSQL = "CALL sp_ActualizarPasswordUsuario(?, ?)";
-    $consultaPreparada = $conexion->prepare($consultaSQL);
-    $consultaPreparada->bind_param("ss", $correo, $passwordHash);
+    try {
+        $consultaSQL = "CALL sp_ActualizarPasswordUsuario(?, ?)";
+        $consultaPreparada = $conexion->prepare($consultaSQL);
+        $consultaPreparada->bind_param("ss", $correo, $passwordHash);
 
-    $resultado = $consultaPreparada->execute();
+        $resultado = $consultaPreparada->execute();
 
-    $consultaPreparada->close();
-    $conexion->next_result();
-    CloseDatabase($conexion);
+        $consultaPreparada->close();
+        $conexion->next_result();
+        CloseDatabase($conexion);
 
-    return $resultado;
+        return $resultado;
+    } catch (mysqli_sql_exception $e) {
+        if (stripos($e->getMessage(), 'sp_ActualizarPasswordUsuario') === false || stripos($e->getMessage(), 'does not exist') === false) {
+            CloseDatabase($conexion);
+            throw $e;
+        }
+
+        $consultaSQL = "UPDATE usuario SET passwordUsuario = ? WHERE emailUsuario = ?";
+        $consultaPreparada = $conexion->prepare($consultaSQL);
+        $consultaPreparada->bind_param("ss", $passwordHash, $correo);
+        $consultaPreparada->execute();
+        $filasAfectadas = $consultaPreparada->affected_rows;
+
+        $consultaPreparada->close();
+        CloseDatabase($conexion);
+
+        return $filasAfectadas > 0;
+    }
 }
 ?>

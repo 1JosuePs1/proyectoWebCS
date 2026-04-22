@@ -30,55 +30,7 @@ foreach ($pedidos as $filaPedido) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <style>
-        .pedido-thumb {
-            width: 62px;
-            height: 62px;
-            object-fit: contain;
-            border-radius: 8px;
-            background: #f8f9fa;
-            padding: 4px;
-        }
-
-        .pedido-direccion {
-            min-width: 250px;
-            white-space: normal;
-            line-height: 1.35;
-        }
-
-        .pedido-direccion-linea {
-            word-break: break-word;
-        }
-
-        .pedido-recibo {
-            min-width: 145px;
-        }
-
-        .pedido-recibo-acciones {
-            display: grid;
-            gap: 0.35rem;
-            justify-items: stretch;
-            width: max-content;
-            margin: 1px auto;
-        }
-
-        .pedido-recibo .btn {
-            white-space: nowrap;
-            padding: 0.3rem 0.6rem;
-            font-size: 0.82rem;
-            line-height: 1.2;
-        }
-
-        @media (max-width: 991px) {
-            .pedido-direccion {
-                min-width: 220px;
-            }
-
-            .pedido-recibo {
-                min-width: 130px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/pedidos-page.css">
 </head>
 
 <body class="bg-light">

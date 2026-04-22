@@ -99,4 +99,22 @@ function ObtenerProductoPorIdModel($idProducto)
     return $producto;
 }
 
+function ObtenerProductosPorCategoriaModel($idCategoria)
+{
+    $conexion = OpenDatabase();
+    $consultaSQL = "CALL sp_ConsultarProductosPorCategoria(?)";
+    $consultaPreparada = $conexion->prepare($consultaSQL);
+    $consultaPreparada->bind_param("i", $idCategoria);
+    $consultaPreparada->execute();
+    $resultado = $consultaPreparada->get_result();
+    $listaProductos = [];
+    while ($producto = $resultado->fetch_assoc()) {
+        $listaProductos[] = $producto;
+    }
+    $resultado->free();
+    $consultaPreparada->close();
+    CloseDatabase($conexion);
+    return $listaProductos;
+}
+
 

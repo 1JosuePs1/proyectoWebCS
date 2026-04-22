@@ -144,7 +144,12 @@ $iconosPorCategoria = [
 
     <!-- Main -->
     <div class="container my-5">
-        <h2 class="mb-4"><?= $nombreCategoriaActual ? htmlspecialchars($nombreCategoriaActual) : 'Productos destacados' ?></h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><?= $nombreCategoriaActual ? htmlspecialchars($nombreCategoriaActual) : 'Productos destacados' ?></h2>
+            <a href="/proyectoWebCS/Views/Home/productos.php" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-grid3 me-1"></i>Ver catálogo completo
+            </a>
+        </div>
         <div class="row g-5">
             <?php include $_SERVER["DOCUMENT_ROOT"] . "/proyectoWebCS/Views/components/cardProducto.php"; ?>
         </div>

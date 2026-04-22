@@ -4,9 +4,29 @@
     $stockProducto = intval($producto['stockProducto'] ?? 0);
     $estadoProducto = strtolower(trim($producto['estadoProducto'] ?? ''));
     $agotado = $stockProducto <= 0 || $estadoProducto === 'agotado';
+    
+    // Manejo de ofertas
+    $enOferta = isset($producto['enOferta']) && $producto['enOferta'] == 1;
+    $precioOferta = isset($producto['precioOferta']) ? floatval($producto['precioOferta']) : null;
+    $precioOriginal = floatval($producto['precioProducto']);
+    
+    // Calcular descuento
+    $descuentoPorc = 0;
+    if ($enOferta && $precioOferta && $precioOferta < $precioOriginal) {
+        $descuentoPorc = round((($precioOriginal - $precioOferta) / $precioOriginal) * 100);
+    }
 ?>
 <div class="col-12 col-md-6 col-lg-4">
-    <div class="producto-card">
+    <div class="producto-card position-relative <?= $enOferta && $descuentoPorc > 0 ? 'en-oferta' : '' ?>">
+        <!-- Badge de Oferta -->
+        <?php if ($enOferta && $descuentoPorc > 0): ?>
+            <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge badge-oferta fs-6">
+                    <i class="bi bi-tag-fill"></i>-<?= $descuentoPorc ?>%
+                </span>
+            </div>
+        <?php endif; ?>
+
         <?php if (!empty($producto['primeraImagen'])): ?>
             <img src="/proyectoWebCS/Views/assets/image/productos/<?php echo $producto['idProducto']; ?>/<?php echo htmlspecialchars($producto['primeraImagen']); ?>"
                 class="img-fluid producto-imagen card-img-producto"
@@ -29,8 +49,29 @@
                 <?php endif; ?>
             </p>
             
+            <!-- Sección de precios -->
+            <div class="mb-3">
+                <?php if ($enOferta && $precioOferta && $precioOferta < $precioOriginal): ?>
+                    <!-- Mostrar precio original tachado y nuevo precio -->
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="precio-tachado">
+                            ₡<?php echo number_format($precioOriginal, 0, ',', '.'); ?>
+                        </span>
+                        <span class="precio-oferta">
+                            ₡<?php echo number_format($precioOferta, 0, ',', '.'); ?>
+                        </span>
+                    </div>
+                    <p class="ahorro-texto mb-0 mt-1">
+                        <i class="bi bi-percent"></i>Ahorra ₡<?php echo number_format($precioOriginal - $precioOferta, 0, ',', '.'); ?>
+                    </p>
+                <?php else: ?>
+                    <!-- Mostrar precio normal -->
+                    <span class="producto-precio">₡<?php echo number_format($precioOriginal, 0, ',', '.'); ?></span>
+                <?php endif; ?>
+            </div>
+            
             <div class="d-flex justify-content-between align-items-center">
-                <span class="producto-precio">₡<?php echo number_format($producto['precioProducto'], 0, ',', '.'); ?></span>
+                <div></div>
                 <div class="d-flex">
                     <?php if ($agotado): ?>
                         <button type="button" class="btn btn-sm btn-secondary disabled me-1" title="Sin stock" disabled>

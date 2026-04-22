@@ -166,4 +166,123 @@ function ObtenerProductosPorCategoriaModel($idCategoria)
     return OrdenarProductosPorDisponibilidadModel($listaProductos);
 }
 
+function ObtenerProductosEnOfertaModel()
+{
+    $conexion = OpenDatabase();
+    $consultaSQL = "SELECT 
+        idProducto,
+        idCategoria,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        enOferta,
+        precioOferta,
+        imagenProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '\$[0]')) AS primeraImagen
+    FROM producto WHERE enOferta = 1 AND estadoProducto = 'disponible' ORDER BY precioProducto DESC";
+    $resultado = $conexion->query($consultaSQL);
+    $listaProductos = [];
+    
+    while ($producto = $resultado->fetch_assoc()) {
+        $listaProductos[] = $producto;
+    }
+    
+    $resultado->free();
+    CloseDatabase($conexion);
+    return $listaProductos;
+}
+
+function FiltrarProductosModel($idCategoria = null, $precioMin = null, $precioMax = null, $ordenar = 'disponibilidad')
+{
+    $conexion = OpenDatabase();
+    
+    $sql = "SELECT 
+        idProducto,
+        idCategoria,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        enOferta,
+        precioOferta,
+        imagenProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '\$[0]')) AS primeraImagen
+    FROM producto WHERE 1=1";
+    
+    if ($idCategoria !== null && $idCategoria > 0) {
+        $idCategoria = intval($idCategoria);
+        $sql .= " AND idCategoria = $idCategoria";
+    }
+    
+    if ($precioMin !== null) {
+        $precioMin = floatval($precioMin);
+        $sql .= " AND precioProducto >= $precioMin";
+    }
+    
+    if ($precioMax !== null) {
+        $precioMax = floatval($precioMax);
+        $sql .= " AND precioProducto <= $precioMax";
+    }
+    
+    // Ordenar según parámetro
+    switch ($ordenar) {
+        case 'precio_menor':
+            $sql .= " ORDER BY precioProducto ASC";
+            break;
+        case 'precio_mayor':
+            $sql .= " ORDER BY precioProducto DESC";
+            break;
+        case 'nombre':
+            $sql .= " ORDER BY nombreProducto ASC";
+            break;
+        case 'relevancia':
+            $sql .= " ORDER BY enOferta DESC, stockProducto DESC";
+            break;
+        case 'disponibilidad':
+        default:
+            $sql .= " ORDER BY CASE WHEN estadoProducto = 'disponible' THEN 0 ELSE 1 END, precioProducto DESC";
+            break;
+    }
+    
+    $resultado = $conexion->query($sql);
+    $listaProductos = [];
+    
+    while ($producto = $resultado->fetch_assoc()) {
+        $listaProductos[] = $producto;
+    }
+    
+    $resultado->free();
+    CloseDatabase($conexion);
+    return $listaProductos;
+}
+
+function ActualizarOfertaProductoModel($idProducto, $enOferta, $precioOferta = null)
+{
+    $conexion = OpenDatabase();
+    
+    $enOferta = $enOferta ? 1 : 0;
+    $precioOferta = ($enOferta && $precioOferta !== null) ? floatval($precioOferta) : null;
+    
+    $sql = "UPDATE producto SET enOferta = ?, precioOferta = ? WHERE idProducto = ?";
+    $consultaPreparada = $conexion->prepare($sql);
+    
+    if (!$consultaPreparada) {
+        CloseDatabase($conexion);
+        return false;
+    }
+    
+    $consultaPreparada->bind_param("idi", $enOferta, $precioOferta, $idProducto);
+    $result = $consultaPreparada->execute();
+    
+    $consultaPreparada->close();
+    CloseDatabase($conexion);
+    
+    return $result;
+}
+
 

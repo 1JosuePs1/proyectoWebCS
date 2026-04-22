@@ -42,6 +42,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $accion = trim($_POST['accion'] ?? 'registrar');
 
+    if ($accion === 'actualizar_oferta') {
+        header('Content-Type: application/json');
+        $idProducto = intval($_POST['idProducto'] ?? 0);
+        $enOferta = isset($_POST['enOferta']) && $_POST['enOferta'] == 1 ? 1 : 0;
+        $precioOferta = trim($_POST['precioOferta'] ?? '');
+
+        if ($idProducto <= 0) {
+            echo json_encode(['success' => false, 'mensaje' => 'Producto inválido']);
+            exit();
+        }
+
+        if ($enOferta && (empty($precioOferta) || !is_numeric($precioOferta) || floatval($precioOferta) <= 0)) {
+            echo json_encode(['success' => false, 'mensaje' => 'Precio en oferta inválido']);
+            exit();
+        }
+
+        $precioOferta = $enOferta ? floatval($precioOferta) : null;
+        $resultado = ActualizarOfertaController($idProducto, $enOferta, $precioOferta);
+
+        if ($resultado) {
+            echo json_encode(['success' => true, 'mensaje' => 'Oferta actualizada correctamente']);
+        } else {
+            echo json_encode(['success' => false, 'mensaje' => 'Error al actualizar la oferta']);
+        }
+        exit();
+    }
+
     if ($accion === 'editar') {
         $idProducto = intval($_POST['idProducto'] ?? 0);
         $idCategoria = trim($_POST['idCategoria'] ?? '');
@@ -50,6 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $descripcion = trim($_POST['descripcionProducto'] ?? '');
         $precio = trim($_POST['precioProducto'] ?? '');
         $stock = trim($_POST['stockProducto'] ?? '');
+        $enOferta = isset($_POST['enOferta']) && $_POST['enOferta'] == 1 ? 1 : 0;
+        $precioOferta = trim($_POST['precioOferta'] ?? '');
 
         if ($idProducto <= 0 || empty($idCategoria) || empty($nombre) || empty($marca) || empty($precio) || $stock === "") {
             $_SESSION['error_producto'] = "Completa los campos obligatorios para editar.";
@@ -83,6 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error_producto'] = "No se pudo actualizar el producto. Verifica que exista el SP sp_EditarProductoAdmin.";
             header("Location: /proyectoWebCS/Views/Admin/editarProducto.php?id=" . $idProducto);
             exit();
+        }
+
+        // Actualizar oferta si es necesario
+        if ($enOferta && !empty($precioOferta) && is_numeric($precioOferta) && floatval($precioOferta) > 0) {
+            ActualizarOfertaController($idProducto, 1, floatval($precioOferta));
+        } else {
+            ActualizarOfertaController($idProducto, 0, null);
         }
 
         $_SESSION['ok_producto'] = "Producto actualizado correctamente.";
@@ -153,7 +189,39 @@ function ObtenerProductoPorIdController($idProducto)
     return ObtenerProductoPorIdModel($idProducto);
 }
 
+function ActualizarOfertaController($idProducto, $enOferta, $precioOferta = null)
+{
+    $idProducto = intval($idProducto);
+    $enOferta = $enOferta ? true : false;
+    
+    if ($enOferta && ($precioOferta === null || $precioOferta === '')) {
+        return false;
+    }
+    
+    if ($enOferta) {
+        $precioOferta = floatval($precioOferta);
+        if ($precioOferta <= 0) {
+            return false;
+        }
+    }
+    
+    return ActualizarOfertaProductoModel($idProducto, $enOferta, $precioOferta);
+}
 
+function ObtenerProductosEnOfertaController()
+{
+    return ObtenerProductosEnOfertaModel();
+}
+
+function FiltrarProductosController($idCategoria = null, $precioMin = null, $precioMax = null, $ordenar = 'disponibilidad')
+{
+    $idCategoria = $idCategoria !== null ? intval($idCategoria) : null;
+    $precioMin = $precioMin !== null ? floatval($precioMin) : null;
+    $precioMax = $precioMax !== null ? floatval($precioMax) : null;
+    $ordenar = in_array($ordenar, ['precio_menor', 'precio_mayor', 'nombre', 'relevancia', 'disponibilidad']) ? $ordenar : 'disponibilidad';
+    
+    return FiltrarProductosModel($idCategoria, $precioMin, $precioMax, $ordenar);
+}
 
 $p = null;
 if (isset($_GET['nombre'])) {

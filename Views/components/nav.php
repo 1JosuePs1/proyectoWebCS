@@ -13,10 +13,14 @@
                         <a class="nav-link active" aria-current="page" href="/proyectoWebCS/Views/Home/Home.php">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Productos</a>
+                        <a class="nav-link" href="/proyectoWebCS/Views/Home/productos.php">
+                            <i class="bi bi-grid3 me-1"></i>Productos
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Ofertas</a>
+                        <a class="nav-link" href="/proyectoWebCS/Views/Home/productos.php?ofertas=1">
+                            <i class="bi bi-tag-fill text-danger me-1"></i>Ofertas
+                        </a>
                     </li>
                     <?php if (isset($_SESSION['idUsuario'])): ?>
                         <li class="nav-item">
@@ -31,8 +35,8 @@
                 </ul>
                 
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar">
+                    <form class="d-flex" role="search" method="GET" action="/proyectoWebCS/Views/Home/productos.php">
+                        <input class="form-control me-2" type="search" name="q" placeholder="Buscar" aria-label="Buscar" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
                         <button class="btn btn-outline-light" type="submit">Buscar</button>
                     </form>
                     <li class="nav-item">   

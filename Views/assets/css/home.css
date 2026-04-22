@@ -10,7 +10,54 @@
     margin-left: auto;
     margin-right: auto;
 }
-/* SLIDER */
+
+/* ESTILOS PARA OFERTAS */
+.producto-card.en-oferta {
+    border: 2px solid #ff6b6b;
+    background: linear-gradient(135deg, #fff 0%, #fff9f9 100%);
+}
+
+.badge-oferta {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(255, 68, 68, 0.4);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.badge-oferta i {
+    margin-right: 4px;
+}
+
+.precio-tachado {
+    text-decoration: line-through;
+    opacity: 0.6;
+    font-size: 0.85em;
+}
+
+.precio-oferta {
+    color: #ff4444;
+    font-weight: 700;
+    font-size: 1.25em;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+.ahorro-texto {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+/* PRODUCTOS CARD CON OFERTA */
 .carousel {
     max-height: 40vh;
   
@@ -187,20 +234,28 @@
 
 /* CARD PRODUCTOS*/
 
+.col-12,
+.col-md-6,
+.col-lg-4 {
+    overflow: visible !important;
+}
+
 .producto-card {
     background: #fff;
     border-radius: 12px;
     padding: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #ececec;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14), 0 3px 10px rgba(0, 0, 0, 0.1) !important;
     transition: transform 0.3s, box-shadow 0.3s;
     width: 100%;
     max-width: 300px;
     margin: 0 auto;
+    overflow: visible;
 }
 
 .producto-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(0, 0, 0, 0.14) !important;
 }
 
 .producto-card .producto-imagen {

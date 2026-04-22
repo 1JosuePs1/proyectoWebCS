@@ -67,7 +67,7 @@ CREATE TABLE `detalleventa` (
 
 LOCK TABLES `detalleventa` WRITE;
 /*!40000 ALTER TABLE `detalleventa` DISABLE KEYS */;
-INSERT INTO `detalleventa` VALUES (1,1,1,2,30000.00);
+INSERT INTO `detalleventa` VALUES (1,2,2,1,86000.00);
 /*!40000 ALTER TABLE `detalleventa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +93,7 @@ CREATE TABLE `pedido` (
   KEY `idUsuario` (`idUsuario`),
   CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`idVenta`) REFERENCES `venta` (`idVenta`),
   CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +102,7 @@ CREATE TABLE `pedido` (
 
 LOCK TABLES `pedido` WRITE;
 /*!40000 ALTER TABLE `pedido` DISABLE KEYS */;
-INSERT INTO `pedido` VALUES (1,1,1,'Josue Rivera','8691-3451','Cartago, cartago, estadio fello meza','completado','2026-04-21 09:34:27','2026-04-21 10:36:01');
+INSERT INTO `pedido` VALUES (1,1,1,'Josue Rivera','8691-3451','Cartago, cartago, estadio fello meza','completado','2026-04-21 09:34:27','2026-04-21 10:36:01'),(2,2,1,'Josue Rivera','2312-3121','Cartago','pendiente','2026-04-22 17:42:32',NULL);
 /*!40000 ALTER TABLE `pedido` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +129,7 @@ CREATE TABLE `producto` (
   KEY `idCategoria` (`idCategoria`),
   KEY `idx_en_oferta` (`enOferta`),
   CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`idCategoria`) REFERENCES `categoria` (`idCategoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,7 +138,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER','RAZER','Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,1,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','disponible',1,20000.00);
+INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER','RAZER','Headset razer',30000.00,5,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','disponible',0,NULL),(2,18,'Western Digital Green SN350 1TB M.2 NVME','Western Digital','Fabricante: Western Digital\r\nCapacidad: 1 TB\r\nVelocidad Lectura: 3200 MB/s\r\nVelocidad Escritura: 2500 MB/s\r\nInterfaz: M.2',86000.00,6,'[\"1.jpg\"]','disponible',0,NULL),(3,20,'Razer Iskur V2 – Negro – RZ38-0490200-R3U1','RAZER','Piel de primera calidad EPU tejido afelpado y resistente a salpicaduras\r\nSoporte lumbar adaptable y ajustable\r\nÁngulo reclinable 152°\r\nAsiento Apoyos laterales reducidos base del asiento más ancha',153238.00,81,'[\"1.png\"]','disponible',0,NULL),(4,6,'TECLADO GAMING RGB RAZER','RAZER','BLACKWIDOW V4 X MECÁNICO ALÁMBRICO USB INGLÉS SWITCH VERDE RZ03-04700200-R3U1 NEGRO',70.10,6,'[\"1.jpg\"]','disponible',0,NULL);
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,7 +213,7 @@ CREATE TABLE `venta` (
   PRIMARY KEY (`idVenta`),
   KEY `idUsuario` (`idUsuario`),
   CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,7 +222,7 @@ CREATE TABLE `venta` (
 
 LOCK TABLES `venta` WRITE;
 /*!40000 ALTER TABLE `venta` DISABLE KEYS */;
-INSERT INTO `venta` VALUES (1,1,60000.00,'2026-04-21');
+INSERT INTO `venta` VALUES (1,1,60000.00,'2026-04-21'),(2,1,86000.00,'2026-04-22');
 /*!40000 ALTER TABLE `venta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1140,4 +1140,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-22 16:36:56
+-- Dump completed on 2026-04-22 17:47:24

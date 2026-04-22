@@ -123,8 +123,11 @@ CREATE TABLE `producto` (
   `stockProducto` int NOT NULL DEFAULT '0',
   `imagenProducto` json DEFAULT NULL,
   `estadoProducto` enum('disponible','agotado') DEFAULT 'disponible',
+  `enOferta` tinyint(1) DEFAULT '0',
+  `precioOferta` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`idProducto`),
   KEY `idCategoria` (`idCategoria`),
+  KEY `idx_en_oferta` (`enOferta`),
   CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`idCategoria`) REFERENCES `categoria` (`idCategoria`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -135,7 +138,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER',NULL,'Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,1,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','disponible');
+INSERT INTO `producto` VALUES (1,4,'HEADSET RAZER','RAZER','Razer Drivers TriForce 50mm Para un rendimiento de audio de alta gama\r\nMicrófono cardioide Razer HyperClear para una mayor claridad de voz\r\nAlmohadillas de Flowknit Memory Foam para una comodidad duradera\r\nControles en los auriculares para mayor comodidad\r\nCompatibilidad multiplataforma Para PC, Mac, Consolas y Dispositivos Móviles',30000.00,1,'[\"1.jpg\", \"2.webp\", \"3.jpg\"]','disponible',1,20000.00);
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +194,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,2,'Josue Rivera','psjosue1@gmail.com','$2y$10$p06Cqlbty4EX4lmgEYpUMOs1KU/av5n.2n3B8n./fQCFJqgJHCnia','2026-03-22','activo'),(2,2,'admin','admin@mypcgaming.com','$2y$10$2R2JL8KbPavqE1Tv6jE7vOPMNa0dFJ/v3MQ7lx46CMWm9BltjCAM6','2026-04-21','activo'),(3,1,'Administrador','admin@tienda.com','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','2026-04-21','activo');
+INSERT INTO `usuario` VALUES (1,2,'Josue Rivera','psjosue1@gmail.com','$2y$10$/6sGEJP.HTKtmM4h7Rg2PuyrEp5izbChnGNWds3OXL.hhXUyp1Gza','2026-03-22','activo'),(2,2,'admin','admin@mypcgaming.com','$2y$10$2R2JL8KbPavqE1Tv6jE7vOPMNa0dFJ/v3MQ7lx46CMWm9BltjCAM6','2026-04-21','activo'),(3,1,'Administrador','admin@tienda.com','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','2026-04-21','activo');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -230,6 +233,86 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'tiendagaming'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarImagenesProducto` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ActualizarImagenesProducto`(
+    IN p_idProducto INT,
+    IN p_imagenJson JSON
+)
+BEGIN
+    UPDATE producto
+    SET imagenProducto = p_imagenJson
+    WHERE idProducto = p_idProducto;
+
+    SELECT ROW_COUNT() AS filasAfectadas;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarOfertaProducto` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ActualizarOfertaProducto`(
+    IN p_idProducto INT,
+    IN p_enOferta TINYINT,
+    IN p_precioOferta DECIMAL(10,2)
+)
+BEGIN
+    UPDATE producto
+    SET enOferta = p_enOferta,
+        precioOferta = p_precioOferta
+    WHERE idProducto = p_idProducto;
+
+    SELECT ROW_COUNT() AS filasAfectadas;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarPasswordUsuario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ActualizarPasswordUsuario`(
+    IN p_correo VARCHAR(100),
+    IN p_passwordHash VARCHAR(255)
+)
+BEGIN
+    UPDATE usuario
+    SET passwordUsuario = p_passwordHash
+    WHERE emailUsuario = p_correo;
+
+    SELECT ROW_COUNT() AS filasAfectadas;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_ActualizarUsuario` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -386,6 +469,72 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosConOferta` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductosConOferta`()
+BEGIN
+    SELECT
+        idProducto,
+        idCategoria,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        enOferta,
+        precioOferta,
+        imagenProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
+    FROM producto;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosOfertaActiva` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductosOfertaActiva`()
+BEGIN
+    SELECT
+        idProducto,
+        idCategoria,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        enOferta,
+        precioOferta,
+        imagenProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
+    FROM producto
+    WHERE enOferta = 1 AND estadoProducto = 'disponible'
+    ORDER BY precioProducto DESC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosPorCategoria` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -416,6 +565,41 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ConsultarProductosPorCategoriaConOferta` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ConsultarProductosPorCategoriaConOferta`(
+    IN p_idCategoria INT
+)
+BEGIN
+    SELECT
+        idProducto,
+        idCategoria,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        enOferta,
+        precioOferta,
+        imagenProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
+    FROM producto
+    WHERE idCategoria = p_idCategoria;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sp_detalle_ventas_dashboard` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -439,6 +623,95 @@ BEGIN
     INNER JOIN detalleventa dv ON v.idVenta = dv.idVenta
     INNER JOIN producto p ON dv.idProducto = p.idProducto
     ORDER BY v.fechaVenta DESC;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_EditarProductoAdmin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb3 */ ;
+/*!50003 SET character_set_results = utf8mb3 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_EditarProductoAdmin`(
+    IN p_idProducto INT,
+    IN p_idCategoria INT,
+    IN p_nombreProducto VARCHAR(100),
+    IN p_marca VARCHAR(100),
+    IN p_descripcionProducto TEXT,
+    IN p_precioProducto DECIMAL(10,2),
+    IN p_stockProducto INT
+)
+BEGIN
+    UPDATE producto
+    SET
+        idCategoria = p_idCategoria,
+        nombreProducto = p_nombreProducto,
+        marca = p_marca,
+        descripcionProducto = p_descripcionProducto,
+        precioProducto = p_precioProducto,
+        stockProducto = p_stockProducto,
+        estadoProducto = CASE
+            WHEN p_stockProducto > 0 THEN 'disponible'
+            ELSE 'agotado'
+        END
+    WHERE idProducto = p_idProducto;
+
+    SELECT ROW_COUNT() AS filasAfectadas;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_FiltrarProductosConOferta` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_FiltrarProductosConOferta`(
+    IN p_idCategoria INT,
+    IN p_precioMin DECIMAL(10,2),
+    IN p_precioMax DECIMAL(10,2),
+    IN p_ordenar VARCHAR(20)
+)
+BEGIN
+    SELECT
+        idProducto,
+        idCategoria,
+        nombreProducto,
+        marca,
+        descripcionProducto,
+        precioProducto,
+        stockProducto,
+        estadoProducto,
+        enOferta,
+        precioOferta,
+        imagenProducto,
+        JSON_UNQUOTE(JSON_EXTRACT(imagenProducto, '$[0]')) AS primeraImagen
+    FROM producto
+    WHERE (p_idCategoria IS NULL OR p_idCategoria <= 0 OR idCategoria = p_idCategoria)
+      AND (p_precioMin IS NULL OR precioProducto >= p_precioMin)
+      AND (p_precioMax IS NULL OR precioProducto <= p_precioMax)
+    ORDER BY
+      CASE WHEN p_ordenar = 'precio_menor' THEN precioProducto END ASC,
+      CASE WHEN p_ordenar = 'precio_mayor' THEN precioProducto END DESC,
+      CASE WHEN p_ordenar = 'nombre' THEN nombreProducto END ASC,
+      CASE WHEN p_ordenar = 'relevancia' THEN enOferta END DESC,
+      CASE WHEN p_ordenar = 'relevancia' THEN stockProducto END DESC,
+      CASE WHEN p_ordenar IS NULL OR p_ordenar = '' OR p_ordenar = 'disponibilidad' THEN (CASE WHEN estadoProducto = 'disponible' THEN 0 ELSE 1 END) END ASC,
+      CASE WHEN p_ordenar IS NULL OR p_ordenar = '' OR p_ordenar = 'disponibilidad' THEN precioProducto END DESC;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -833,6 +1106,30 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_VerificarCorreoUsuario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_VerificarCorreoUsuario`(
+    IN p_correo VARCHAR(100)
+)
+BEGIN
+    SELECT idUsuario, emailUsuario
+    FROM usuario
+    WHERE emailUsuario = p_correo
+    LIMIT 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -843,4 +1140,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-21 15:13:46
+-- Dump completed on 2026-04-22 16:36:56
